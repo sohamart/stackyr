@@ -9,7 +9,7 @@ import { ArrowRight, Sparkles, Layers, ShieldCheck, Cpu } from 'lucide-react';
 
 export default function HomePage({ content, brands, onSelectBrand, onNavigate }) {
   return (
-    <div style={{ overflow: 'hidden', width: '100%', maxWidth: '100vw' }}>
+    <div style={{ width: '100%', maxWidth: '100vw', overflowX: 'clip' }}>
       {/* 1. Parent Ecosystem Hero with Animated Autoplay Video Showcase */}
       <HeroSection
         heroData={content?.hero}

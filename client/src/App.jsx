@@ -96,36 +96,18 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, [isAuthenticated]);
 
-  // Initialize Ultra-Smooth Lenis Inertial Scrolling across site
+  // Initialize Pure Silk "Makhon" Lenis Inertial Scrolling across site
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 0.95,
+      lerp: 0.085, // Gold-standard linear interpolation for butter-smooth floating glide
+      wheelMultiplier: 0.9,
       touchMultiplier: 1.0,
-      syncTouch: false, // Prevents touch event hijacking; guarantees silky 120Hz native touch momentum on mobile
+      smoothWheel: true,
+      syncTouch: false, // Ensures zero touch interference on mobile (120Hz native hardware touch momentum)
       infinite: false
     });
 
     window.__lenis = lenis;
-
-    // High-performance anti-stutter scroll handler (prevents hover style recalculations during active scroll)
-    let scrollTimeout;
-    const handleActiveScroll = () => {
-      if (!document.body.classList.contains('is-scrolling')) {
-        document.body.classList.add('is-scrolling');
-      }
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        document.body.classList.remove('is-scrolling');
-      }, 90);
-    };
-
-    lenis.on('scroll', handleActiveScroll);
-    window.addEventListener('scroll', handleActiveScroll, { passive: true });
 
     let rafId;
     function raf(time) {
@@ -135,9 +117,6 @@ export default function App() {
     rafId = requestAnimationFrame(raf);
 
     return () => {
-      clearTimeout(scrollTimeout);
-      document.body.classList.remove('is-scrolling');
-      window.removeEventListener('scroll', handleActiveScroll);
       cancelAnimationFrame(rafId);
       lenis.destroy();
       window.__lenis = null;

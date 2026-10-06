@@ -3,8 +3,6 @@ import { ArrowUpRight, Sparkles, Layers, Shield, ExternalLink, Activity } from '
 
 export default function BrandCard({ brand, onSelect }) {
   const cardRef = useRef(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
@@ -14,17 +12,16 @@ export default function BrandCard({ brand, onSelect }) {
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    // Subtle tilt: max 6 degrees
-    const rX = ((y - centerY) / centerY) * -6;
-    const rY = ((x - centerX) / centerX) * 6;
-    setRotateX(rX);
-    setRotateY(rY);
+    const rX = ((y - centerY) / centerY) * -5;
+    const rY = ((x - centerX) / centerX) * 5;
+    cardRef.current.style.transform = `perspective(1000px) rotateX(${rX.toFixed(2)}deg) rotateY(${rY.toFixed(2)}deg) translateY(-5px)`;
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setRotateX(0);
-    setRotateY(0);
+    if (cardRef.current) {
+      cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    }
   };
 
   const accent = brand.accentColor || '#FF6B00';
@@ -41,16 +38,15 @@ export default function BrandCard({ brand, onSelect }) {
         position: 'relative',
         borderRadius: '22px',
         background: isHovered
-          ? 'linear-gradient(135deg, rgba(26, 30, 46, 0.82) 0%, rgba(12, 14, 22, 0.92) 100%)'
+          ? 'linear-gradient(135deg, rgba(26, 30, 46, 0.85) 0%, rgba(12, 14, 22, 0.95) 100%)'
           : 'linear-gradient(135deg, rgba(16, 19, 30, 0.65) 0%, rgba(8, 10, 16, 0.8) 100%)',
-        backdropFilter: 'blur(24px) saturate(190%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(190%)',
-        border: `1px solid ${isHovered ? accent : 'rgba(255, 255, 255, 0.12)'}`,
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: `1px solid ${isHovered ? accent : 'rgba(255, 255, 255, 0.1)'}`,
         boxShadow: isHovered
           ? `0 24px 50px -12px rgba(0, 0, 0, 0.85), 0 0 32px -6px ${accent}45, inset 0 1px 1px rgba(255, 255, 255, 0.25)`
           : '0 10px 30px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.12)',
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) ${isHovered ? 'translateY(-6px)' : 'translateY(0)'}`,
-        transition: 'transform 0.15s ease-out, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease',
+        transition: 'border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease',
         cursor: 'pointer',
         overflow: 'hidden',
         display: 'flex',

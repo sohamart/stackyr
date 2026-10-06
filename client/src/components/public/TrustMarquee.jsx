@@ -1,24 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 
 export default function TrustMarquee() {
-  const containerRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.05, rootMargin: '100px 0px' }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const partners = [
     {
       name: 'NVIDIA',
@@ -196,10 +178,7 @@ export default function TrustMarquee() {
       />
 
       {/* Infinite Scrolling Track - Hardware 3D Composited */}
-      <div
-        className="marquee-track"
-        style={{ animationPlayState: isVisible ? 'running' : 'paused' }}
-      >
+      <div className="marquee-track">
         {duplicatedList.map((partner, index) => (
           <div
             key={`${partner.name}-${index}`}

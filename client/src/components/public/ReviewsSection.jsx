@@ -1,25 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 import { Star, CheckCircle2, Sparkles } from 'lucide-react';
 
 export default function ReviewsSection() {
-  const sectionRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.05, rootMargin: '100px 0px' }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const reviewsRow1 = [
     {
       id: 1,
@@ -396,20 +378,14 @@ export default function ReviewsSection() {
 
         {/* Row 1: Moves Left (Right to Left) - Hardware 3D Accelerated */}
         <div style={{ marginBottom: '10px' }}>
-          <div
-            className="reviews-marquee-left"
-            style={{ animationPlayState: isVisible ? 'running' : 'paused' }}
-          >
+          <div className="reviews-marquee-left">
             {duplicatedRow1.map((rev, idx) => renderCard(rev, idx))}
           </div>
         </div>
 
         {/* Row 2: Moves Right (Left to Right) - Hardware 3D Accelerated */}
         <div>
-          <div
-            className="reviews-marquee-right"
-            style={{ animationPlayState: isVisible ? 'running' : 'paused' }}
-          >
+          <div className="reviews-marquee-right">
             {duplicatedRow2.map((rev, idx) => renderCard(rev, idx))}
           </div>
         </div>
