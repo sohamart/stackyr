@@ -1,0 +1,53 @@
+# Node modules / Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files & secrets
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.local
+
+# Vercel / Deployment caches
+.vercel/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Uploads and temporary data
+server/uploads/*
+!server/uploads/.gitkeep
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary media / screenshots
+WhatsApp Image*.jpeg
