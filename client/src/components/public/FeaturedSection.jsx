@@ -70,8 +70,8 @@ export default function FeaturedSection({ brands = [], onSelectBrand }) {
         style={{
           borderRadius: 'clamp(18px, 3.5vw, 28px)',
           background: 'linear-gradient(135deg, rgba(16, 18, 28, 0.88) 0%, rgba(9, 10, 15, 0.96) 100%)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           border: `1px solid ${accent}50`,
           padding: 'clamp(16px, 3.5vw, 40px)',
           boxShadow: `0 24px 70px -20px rgba(0, 0, 0, 0.9), 0 0 40px -15px ${accent}25, inset 0 1px 1px rgba(255, 255, 255, 0.15)`,

@@ -40,8 +40,10 @@ export default function BrandCard({ brand, onSelect }) {
         background: isHovered
           ? 'linear-gradient(135deg, rgba(26, 30, 46, 0.85) 0%, rgba(12, 14, 22, 0.95) 100%)'
           : 'linear-gradient(135deg, rgba(16, 19, 30, 0.65) 0%, rgba(8, 10, 16, 0.8) 100%)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
         border: `1px solid ${isHovered ? accent : 'rgba(255, 255, 255, 0.1)'}`,
         boxShadow: isHovered
           ? `0 24px 50px -12px rgba(0, 0, 0, 0.85), 0 0 32px -6px ${accent}45, inset 0 1px 1px rgba(255, 255, 255, 0.25)`

@@ -96,28 +96,22 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, [isAuthenticated]);
 
-  // Initialize Pure Silk "Makhon" Lenis Inertial Scrolling across site
+  // Initialize Calibrated Time-Based Smooth Lenis Engine (Decoupled from native refresh rate)
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.085, // Gold-standard linear interpolation for butter-smooth floating glide
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.0,
+      duration: 1.2, // Continuous smooth floating glide duration in seconds
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Gold-standard exponential ease-out
+      wheelMultiplier: 0.85, // Strictly controls scroll travel per wheel tick: deliberate, measured, zero runaway
+      touchMultiplier: 1.2,
       smoothWheel: true,
-      syncTouch: false, // Ensures zero touch interference on mobile (120Hz native hardware touch momentum)
-      infinite: false
+      syncTouch: false, // Ensures zero touch hijacking on mobile (pure 120Hz native hardware momentum)
+      infinite: false,
+      autoRaf: true // Automatically manages high-precision performance.now() delta-time loop, fully independent of screen refresh rates
     });
 
     window.__lenis = lenis;
 
-    let rafId;
-    function raf(time) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
-
     return () => {
-      cancelAnimationFrame(rafId);
       lenis.destroy();
       window.__lenis = null;
     };

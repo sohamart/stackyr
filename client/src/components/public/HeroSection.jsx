@@ -134,18 +134,26 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
   // Dynamically resolve Cloudinary, ImageKit, YouTube, Vimeo, or direct video
   const media = resolveMediaSource(hero.videoUrl);
 
-  // Ensure Video Autoplays Muted smoothly when direct video is rendered
+  // Smart GPU video lifecycle: play when visible, pause when offscreen to preserve 100% scroll performance
   useEffect(() => {
     if (media.type !== 'video') return;
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Autoplay policy fallback
-      });
-    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.05, rootMargin: '120px 0px' }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
   }, [media.url, media.type]);
 
   return (
@@ -357,11 +365,11 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
             background: 'linear-gradient(180deg, rgba(255, 107, 0, 0.28) 0%, rgba(255, 255, 255, 0.05) 30%, rgba(9, 11, 16, 0.98) 100%)',
             border: '1px solid rgba(255, 107, 0, 0.45)',
             boxShadow: '0 24px 70px -15px rgba(0, 0, 0, 0.95), 0 0 45px -10px rgba(255, 107, 0, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.25)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
             overflow: 'hidden',
             boxSizing: 'border-box',
-            touchAction: 'pan-y'
+            touchAction: 'pan-y',
+            transform: 'translateZ(0)',
+            willChange: 'transform'
           }}
           className="hero-video-chassis-wrapper"
         >
@@ -375,7 +383,7 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
               filter: 'blur(28px)',
               pointerEvents: 'none',
               zIndex: 0,
-              willChange: 'opacity'
+              transform: 'translateZ(0)'
             }}
           />
 
@@ -387,7 +395,8 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
               overflow: 'hidden',
               background: '#040508',
               boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.95), 0 12px 40px rgba(0, 0, 0, 0.7)',
-              zIndex: 1
+              zIndex: 1,
+              transform: 'translateZ(0)'
             }}
           >
             {/* Showcase Media Container (16:9 - Seamlessly plays Cloudinary, ImageKit, YouTube, Vimeo, or MP4) */}
@@ -406,7 +415,9 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
                     height: '100%',
                     objectFit: 'cover',
                     display: 'block',
-                    pointerEvents: 'none'
+                    pointerEvents: 'none',
+                    transform: 'translateZ(0)',
+                    willChange: 'transform'
                   }}
                 >
                   <source src={media.url} type="video/mp4" />
