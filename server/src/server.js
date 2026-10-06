@@ -35,6 +35,16 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(morgan('dev'));
 
+// Ensure DB is initialized before processing API requests (critical for serverless / Vercel)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    // database fallback handles this
+  }
+  next();
+});
+
 // Static uploads folder
 const uploadDir = path.resolve(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadDir));

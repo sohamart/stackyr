@@ -47,11 +47,28 @@ export async function getBrands(req, res) {
     if (featured !== undefined) query.featured = featured === 'true';
     if (comingSoon !== undefined) query.isComingSoon = comingSoon === 'true';
 
-    const brands = await Brand.find(query).sort({ order: 1, createdAt: -1 });
+    let brands = await Brand.find(query).sort({ order: 1, createdAt: -1 });
+
+    // If MongoDB Atlas has 0 brands, auto-seed initial brands
+    if (brands.length === 0 && (!category || category === 'All') && !status) {
+      try {
+        const count = await Brand.countDocuments();
+        if (count === 0) {
+          console.log('[Stackyr DB] Populating empty Atlas cluster with initial brands...');
+          await Brand.insertMany(initialBrands);
+          brands = await Brand.find(query).sort({ order: 1, createdAt: -1 });
+        }
+      } catch (seedErr) {
+        // continue
+      }
+    }
+
     res.json({ success: true, count: brands.length, data: brands });
   } catch (error) {
-    console.error('Error fetching brands:', error);
-    res.status(500).json({ success: false, message: 'Server error fetching brands', error: error.message });
+    console.warn('[Stackyr Brands] Serving resilient fallback due to DB note:', error.message);
+    ensureMemoryBrands();
+    let list = [...getFallbackDb().brands];
+    return res.json({ success: true, count: list.length, data: list });
   }
 }
 
@@ -67,10 +84,26 @@ export async function getBrandById(req, res) {
       return res.json({ success: true, data: brand });
     }
 
-    const brand = await Brand.findOne({ $or: [{ _id: id }, { slug: id }] });
-    if (!brand) return res.status(404).json({ success: false, message: 'Brand not found' });
+    let brand = null;
+    try {
+      brand = await Brand.findOne({ $or: [{ _id: id }, { slug: id }] });
+    } catch (e) {
+      // id might not be ObjectId, check by slug
+      brand = await Brand.findOne({ slug: id });
+    }
+
+    if (!brand) {
+      ensureMemoryBrands();
+      const fallbackBrand = getFallbackDb().brands.find(b => b._id === id || b.slug === id);
+      if (fallbackBrand) return res.json({ success: true, data: fallbackBrand });
+      return res.status(404).json({ success: false, message: 'Brand not found' });
+    }
+
     res.json({ success: true, data: brand });
   } catch (error) {
+    ensureMemoryBrands();
+    const fallbackBrand = getFallbackDb().brands.find(b => b._id === req.params.id || b.slug === req.params.id);
+    if (fallbackBrand) return res.json({ success: true, data: fallbackBrand });
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }
 }

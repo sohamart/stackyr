@@ -15,7 +15,7 @@ export async function getContent(req, res) {
   try {
     if (isFallbackActive()) {
       ensureMemoryContent();
-      return res.json({ success: true, data: getFallbackDb().content });
+      return res.json({ success: true, data: getFallbackDb().content || initialSiteContent });
     }
 
     let content = await SiteContent.findOne();
@@ -24,8 +24,9 @@ export async function getContent(req, res) {
     }
     res.json({ success: true, data: content });
   } catch (error) {
-    console.error('Error fetching content:', error);
-    res.status(500).json({ success: false, message: 'Server error fetching content', error: error.message });
+    console.warn('[Stackyr Content] Serving resilient fallback due to DB note:', error.message);
+    ensureMemoryContent();
+    return res.json({ success: true, data: getFallbackDb().content || initialSiteContent });
   }
 }
 
