@@ -580,11 +580,11 @@
   "users": [
     {
       "_id": "user_admin_1",
-      "name": "Stackyr Super Admin",
-      "email": "admin@stackyr.io",
-      "password": "$2a$10$zawRlJM7VUqfg537HEvg7.xNTzZvgsi52ouYfuitH14cZPlZhepPG",
+      "name": "Soham Dutta",
+      "email": "sohamduttabwn@gmail.com",
+      "password": "$2a$10$Nls5.VVNXIdSnYZrxxIuNOpqF2ZFlAa1eZjEKCdMpWQWT8CreI5xy",
       "role": "admin",
-      "createdAt": "2026-10-05T15:42:50.033Z"
+      "createdAt": "2026-10-06T12:30:00.000Z"
     }
   ],
   "inquiries": [],
