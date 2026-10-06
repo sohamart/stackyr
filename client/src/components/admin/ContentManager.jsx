@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { updateContent } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
+import { resolveMediaSource } from '../../utils/mediaUtils';
 
 export default function ContentManager({ content, onRefresh }) {
   const { success, error } = useToast();
@@ -329,100 +330,167 @@ export default function ContentManager({ content, onRefresh }) {
             </div>
           </div>
 
-          {/* HERO SHOWCASE VIDEO URL & LIVE PREVIEW */}
-          <div
-            style={{
-              padding: '20px',
-              borderRadius: '16px',
-              background: 'rgba(255, 107, 0, 0.05)',
-              border: '1px solid rgba(255, 107, 0, 0.25)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.84rem', color: 'var(--accent-orange)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                  HERO SHOWCASE VIDEO URL
-                </label>
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                  Direct MP4 or WebM video link (e.g. from Cloudinary, S3, CDN, or local /videos/...)
-                </span>
-              </div>
+          {/* HERO SHOWCASE MEDIA (CLOUDINARY, IMAGEKIT, EMBEDS & DIRECT MP4) */}
+          {(() => {
+            const previewMedia = resolveMediaSource(heroForm.videoUrl);
+            const providerLabels = {
+              cloudinary: 'Cloudinary Media Engine (Direct / Embed Supported)',
+              imagekit: 'ImageKit Real-time CDN (Direct / Transformed Supported)',
+              youtube: 'YouTube Streaming Embed',
+              vimeo: 'Vimeo High-Definition Embed',
+              direct: 'Direct Video / File Stream',
+              generic: 'Generic Embed Stream'
+            };
 
-              <button
-                type="button"
-                onClick={() => setHeroForm({ ...heroForm, videoUrl: '/videos/stackyr-showcase.mp4' })}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.74rem',
-                  fontFamily: 'var(--font-mono)',
-                  padding: '5px 12px',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
-              >
-                Reset to Default Video
-              </button>
-            </div>
-
-            <input
-              type="text"
-              placeholder="e.g. https://your-cdn.com/videos/brand-reel.mp4 or /videos/stackyr-showcase.mp4"
-              value={heroForm.videoUrl || ''}
-              onChange={(e) => setHeroForm({ ...heroForm, videoUrl: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '10px',
-                background: 'rgba(0, 0, 0, 0.5)',
-                border: '1px solid rgba(255, 107, 0, 0.3)',
-                color: '#FFFFFF',
-                outline: 'none',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.86rem'
-              }}
-            />
-
-            {/* Video Live Preview Player */}
-            <div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
-                SHOWCASE VIDEO LIVE PREVIEW:
-              </div>
+            return (
               <div
                 style={{
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: '520px',
-                  aspectRatio: '16 / 9',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  background: '#040508',
-                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                  padding: '20px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 107, 0, 0.05)',
+                  border: '1px solid rgba(255, 107, 0, 0.25)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px'
                 }}
               >
-                {heroForm.videoUrl ? (
-                  <video
-                    key={heroForm.videoUrl}
-                    src={heroForm.videoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                    No video URL provided
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                      <label style={{ display: 'block', fontSize: '0.84rem', color: 'var(--accent-orange)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                        HERO SHOWCASE MEDIA URL / EMBED
+                      </label>
+                      <span
+                        style={{
+                          fontSize: '0.66rem',
+                          fontFamily: 'var(--font-mono)',
+                          padding: '2px 8px',
+                          borderRadius: '9999px',
+                          background: previewMedia.provider === 'cloudinary' 
+                            ? 'rgba(52, 168, 83, 0.2)' 
+                            : previewMedia.provider === 'imagekit' 
+                            ? 'rgba(0, 164, 228, 0.2)' 
+                            : 'rgba(255, 107, 0, 0.15)',
+                          color: previewMedia.provider === 'cloudinary' 
+                            ? '#4ADE80' 
+                            : previewMedia.provider === 'imagekit' 
+                            ? '#38BDF8' 
+                            : '#FED7AA',
+                          border: '1px solid rgba(255, 255, 255, 0.1)'
+                        }}
+                      >
+                        {providerLabels[previewMedia.provider] || 'Auto-Detected'}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                      Supports Cloudinary (res.cloudinary.com or player embed), ImageKit (ik.imagekit.io), YouTube, Vimeo, iframe code, or direct MP4.
+                    </span>
                   </div>
-                )}
+
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setHeroForm({ ...heroForm, videoUrl: '/videos/stackyr-showcase.mp4' })}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.74rem',
+                        fontFamily: 'var(--font-mono)',
+                        padding: '5px 12px',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Reset to Default
+                    </button>
+                  </div>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Paste Cloudinary URL, ImageKit link, YouTube/Vimeo embed, or direct MP4..."
+                  value={heroForm.videoUrl || ''}
+                  onChange={(e) => setHeroForm({ ...heroForm, videoUrl: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    border: '1px solid rgba(255, 107, 0, 0.3)',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.86rem'
+                  }}
+                />
+
+                {/* Cloudinary & ImageKit Quick Format Hints */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  <span style={{ color: '#94A3B8' }}>Supported formats:</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', color: '#CBD5E1', background: 'rgba(255,255,255,0.04)', padding: '2px 6px', borderRadius: '4px' }}>
+                    Cloudinary: https://res.cloudinary.com/.../video.mp4
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', color: '#CBD5E1', background: 'rgba(255,255,255,0.04)', padding: '2px 6px', borderRadius: '4px' }}>
+                    ImageKit: https://ik.imagekit.io/.../video.mp4
+                  </span>
+                </div>
+
+                {/* Media Live Preview Player */}
+                <div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
+                    SHOWCASE MEDIA LIVE PREVIEW ({previewMedia.type.toUpperCase()}):
+                  </div>
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      maxWidth: '520px',
+                      aspectRatio: '16 / 9',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      background: '#040508',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}
+                  >
+                    {previewMedia.url ? (
+                      previewMedia.type === 'video' ? (
+                        <video
+                          key={previewMedia.url}
+                          src={previewMedia.url}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : previewMedia.type === 'iframe' ? (
+                        <iframe
+                          key={previewMedia.url}
+                          src={previewMedia.url}
+                          title="Preview Stream"
+                          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                          style={{ width: '100%', height: '100%', border: 'none' }}
+                        />
+                      ) : (
+                        <img
+                          key={previewMedia.url}
+                          src={previewMedia.url}
+                          alt="Preview Showcase"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      )
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                        No media URL provided
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       )}
 

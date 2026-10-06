@@ -3,6 +3,7 @@ import {
   ArrowRight, Sparkles, Activity, Layers, Shield, Zap,
   Cpu, Globe, Terminal
 } from 'lucide-react';
+import { resolveMediaSource } from '../../utils/mediaUtils';
 
 export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
   const containerRef = useRef(null);
@@ -112,19 +113,6 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
     };
   }, []);
 
-  // Ensure Video Autoplays Muted smoothly
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = true;
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Autoplay policy fallback
-      });
-    }
-  }, [heroData?.videoUrl]);
-
   const hero = {
     badgeText: heroData?.badgeText || 'Autonomous Venture Ecosystem • V2.6',
     title: heroData?.title || 'STACKING',
@@ -142,6 +130,23 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
       { label: 'SLA Fault Tolerance', value: '99.999%', detail: 'Zero-downtime architecture' }
     ]
   };
+
+  // Dynamically resolve Cloudinary, ImageKit, YouTube, Vimeo, or direct video
+  const media = resolveMediaSource(hero.videoUrl);
+
+  // Ensure Video Autoplays Muted smoothly when direct video is rendered
+  useEffect(() => {
+    if (media.type !== 'video') return;
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Autoplay policy fallback
+      });
+    }
+  }, [media.url, media.type]);
 
   return (
     <section
@@ -423,25 +428,60 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
               </div>
             </div>
 
-            {/* Video Container (16:9) */}
+            {/* Showcase Media Container (16:9 - Seamlessly plays Cloudinary, ImageKit, YouTube, Vimeo, or MP4) */}
             <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', overflow: 'hidden' }}>
-              <video
-                key={hero.videoUrl}
-                ref={videoRef}
-                src={hero.videoUrl}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  pointerEvents: 'none'
-                }}
-              />
+              {media.type === 'video' && (
+                <video
+                  key={media.url}
+                  ref={videoRef}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    pointerEvents: 'none'
+                  }}
+                >
+                  <source src={media.url} type="video/mp4" />
+                  <source src={media.url} type="video/webm" />
+                </video>
+              )}
+
+              {media.type === 'iframe' && (
+                <iframe
+                  key={media.url}
+                  src={media.url}
+                  title="Hero Showcase Media Stream"
+                  allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    display: 'block',
+                    pointerEvents: 'none'
+                  }}
+                />
+              )}
+
+              {media.type === 'image' && (
+                <img
+                  key={media.url}
+                  src={media.url}
+                  alt="Hero Showcase Preview"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    pointerEvents: 'none'
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
