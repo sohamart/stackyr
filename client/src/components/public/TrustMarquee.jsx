@@ -118,7 +118,6 @@ export default function TrustMarquee() {
 
   return (
     <div
-      ref={containerRef}
       style={{
         position: 'relative',
         width: '100%',

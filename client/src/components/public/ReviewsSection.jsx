@@ -260,7 +260,6 @@ export default function ReviewsSection() {
 
   return (
     <section
-      ref={sectionRef}
       id="reviews"
       style={{
         position: 'relative',
