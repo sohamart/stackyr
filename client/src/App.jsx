@@ -18,8 +18,8 @@ import defaultData from './data/defaultData.json';
 import { fetchBrands, fetchContent } from './services/api';
 import { useAuth } from './context/AuthContext';
 import { useToast } from './context/ToastContext';
-import { Eye, Cpu } from 'lucide-react';
 import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 
 export default function App() {
   const { isAuthenticated } = useAuth();
@@ -96,35 +96,28 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, [isAuthenticated]);
 
-  // Initialize Gold-Standard Lenis Inertial Smooth Scrolling across site
+  // Initialize Ultra-Smooth Lenis Inertial Scrolling across site
   useEffect(() => {
-    // Only initialize Lenis on desktop pointer devices.
-    // On touch/mobile devices, native hardware inertial touch scrolling provides 120Hz smooth scrolling
-    // and must NEVER be hijacked by JS touch listeners (which causes touch freeze and stutter).
-    const isTouchDevice = typeof window !== 'undefined' && 
-      (('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 768);
-
-    if (isTouchDevice) {
-      return;
-    }
-
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.0,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.0,
+      syncTouch: false, // Prevents touch event hijacking; guarantees silky 120Hz native touch momentum on mobile
       infinite: false
     });
 
     window.__lenis = lenis;
 
+    let rafId;
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-
-    const rafId = requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
       cancelAnimationFrame(rafId);

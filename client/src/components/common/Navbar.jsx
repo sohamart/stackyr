@@ -14,8 +14,13 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
+    let lastScrolled = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 24);
+      const isScrolled = window.scrollY > 24;
+      if (isScrolled !== lastScrolled) {
+        lastScrolled = isScrolled;
+        setScrolled(isScrolled);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);

@@ -678,3 +678,73 @@ button {
   }
 }
 
+/* ========================================================
+   HIGH PERFORMANCE SMOOTH SCROLLING & MOBILE OPTIMIZATIONS
+   ======================================================== */
+
+/* Desktop Spotlight Torch: disabled on mobile and touch devices */
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+  .desktop-cursor-torch {
+    display: none !important;
+  }
+}
+
+/* Fixed noise texture: disabled on mobile to eliminate compositor repaints */
+@media (max-width: 768px) {
+  .noise-overlay {
+    display: none !important;
+  }
+}
+
+.noise-overlay {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Video Chassis Text Responsiveness */
+.chassis-text-short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .chassis-text-full {
+    display: none !important;
+  }
+  .chassis-text-short {
+    display: inline !important;
+  }
+}
+
+/* Mobile Hero Status Pill: Ultra-Compact & Elegant Micro-Chip */
+@media (max-width: 640px) {
+  .hero-status-pill {
+    padding: 3px 10px !important;
+    gap: 5px !important;
+    border-radius: 9999px !important;
+    background: rgba(14, 16, 24, 0.85) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 107, 0, 0.08) !important;
+  }
+  .hero-badge-title {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.05em !important;
+  }
+  .hero-badge-dot {
+    font-size: 0.55rem !important;
+  }
+  .hero-badge-fabric {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.02em !important;
+  }
+  .hero-video-chassis-wrapper {
+    animation: none !important; /* Rock-solid GPU stability on mobile touch */
+  }
+}
+
+/* Hardware GPU Acceleration Helpers for silky 60/120fps */
+.hero-cyber-grid,
+.hero-spotlight,
+.hero-video-aura {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+

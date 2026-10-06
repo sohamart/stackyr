@@ -189,9 +189,8 @@ export default function TrustMarquee() {
               padding: '10px 22px',
               margin: '0 8px',
               borderRadius: '9999px',
-              background: 'rgba(255, 255, 255, 0.025)',
+              background: 'rgba(16, 18, 26, 0.72)',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(16px)',
               flexShrink: 0,
               cursor: 'default',
               transition: 'all 0.25s ease'

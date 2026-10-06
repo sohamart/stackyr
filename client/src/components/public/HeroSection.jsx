@@ -10,46 +10,78 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
   const videoRef = useRef(null);
   const torchRef = useRef(null);
 
-  // High-performance GPU cursor spotlight (Zero React re-renders)
+  // High-performance GPU cursor spotlight (Only for desktop pointer devices with hover)
   useEffect(() => {
+    const isHoverCapable = typeof window !== 'undefined' && 
+      window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!isHoverCapable) return;
+
+    let rafId = null;
     const handleMove = (e) => {
       if (!torchRef.current) return;
-      torchRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        if (torchRef.current) {
+          torchRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+        }
+        rafId = null;
+      });
     };
     window.addEventListener('pointermove', handleMove, { passive: true });
-    return () => window.removeEventListener('pointermove', handleMove);
+    return () => {
+      window.removeEventListener('pointermove', handleMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
-  // Subtle synaptic dust canvas
+  // Subtle synaptic dust canvas (Hardware accelerated, paused when scrolled out of view)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let animationFrameId = null;
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
+    let isVisible = true;
+
+    // Pause rendering when hero is out of viewport to free 100% GPU/CPU during page scroll
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible && !animationFrameId) {
+        render();
+      }
+    }, { threshold: 0.05 });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
     const particles = [];
-    const count = 40;
+    const isMobile = window.innerWidth <= 768;
+    const count = isMobile ? 18 : 36;
 
     for (let i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        radius: Math.random() * 1.5 + 0.5,
-        alpha: Math.random() * 0.5 + 0.2
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        radius: Math.random() * 1.3 + 0.5,
+        alpha: Math.random() * 0.45 + 0.15
       });
     }
 
     const render = () => {
+      if (!isVisible) {
+        animationFrameId = null;
+        return;
+      }
       ctx.clearRect(0, 0, width, height);
 
       particles.forEach((p) => {
@@ -63,8 +95,7 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 107, 0, ${p.alpha})`;
-        ctx.shadowColor = '#FF6B00';
-        ctx.shadowBlur = 8;
+        // Zero software shadowBlur overhead for consistent 120fps
         ctx.fill();
       });
 
@@ -75,7 +106,9 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
+      if (containerRef.current) observer.unobserve(containerRef.current);
+      observer.disconnect();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
@@ -116,8 +149,8 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        paddingTop: 'clamp(116px, 18vw, 150px)',
-        paddingBottom: 'clamp(48px, 7vw, 80px)',
+        paddingTop: 'clamp(84px, 12vw, 136px)',
+        paddingBottom: 'clamp(42px, 6vw, 76px)',
         overflow: 'hidden',
         background: '#060608',
         display: 'flex',
@@ -128,20 +161,21 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
       {/* 1. Cinematic Horizon Spotlight & Top Cone */}
       <div className="hero-spotlight" />
 
-      {/* 2. Interactive Cursor Torch Follower (Zero CPU overhead) */}
+      {/* 2. Interactive Cursor Torch Follower (Only for fine pointer desktop, disabled on mobile/touch) */}
       <div
         ref={torchRef}
+        className="desktop-cursor-torch"
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
-          width: '500px',
-          height: '500px',
+          width: '420px',
+          height: '420px',
           borderRadius: '50%',
-          transform: 'translate3d(500px, 300px, 0) translate(-50%, -50%)',
-          background: 'radial-gradient(circle, rgba(255, 107, 0, 0.1) 0%, rgba(245, 158, 11, 0.02) 45%, transparent 70%)',
+          transform: 'translate3d(-999px, -999px, 0)',
+          background: 'radial-gradient(circle, rgba(255, 107, 0, 0.08) 0%, rgba(245, 158, 11, 0.02) 45%, transparent 70%)',
           pointerEvents: 'none',
-          filter: 'blur(50px)',
+          filter: 'blur(45px)',
           zIndex: 1,
           willChange: 'transform'
         }}
@@ -166,76 +200,76 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
 
       {/* Main Content Container */}
       <div className="container" style={{ position: 'relative', zIndex: 10, width: '100%', padding: '0 clamp(14px, 3.5vw, 24px)' }}>
-        {/* Top Announcement Pill */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(20px, 4vw, 30px)', maxWidth: '100%' }}>
+        {/* Sleek, Compact Status Micro-Badge (Refined mobile & desktop proportions) */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(14px, 2.5vw, 22px)', maxWidth: '100%' }}>
           <div
+            className="hero-status-pill"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              flexWrap: 'wrap',
-              gap: '6px',
-              padding: '5px 14px',
+              gap: '7px',
+              padding: '4px 13px',
               borderRadius: '9999px',
               maxWidth: '100%',
-              background: 'rgba(18, 20, 28, 0.85)',
-              border: '1px solid rgba(255, 107, 0, 0.35)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 107, 0, 0.15)',
-              textAlign: 'center'
+              background: 'rgba(14, 16, 24, 0.78)',
+              border: '1px solid rgba(255, 107, 0, 0.3)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 107, 0, 0.1)',
+              textAlign: 'center',
+              whiteSpace: 'nowrap'
             }}
           >
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  background: '#22C55E',
-                  boxShadow: '0 0 8px #22C55E',
-                  flexShrink: 0
-                }}
-              />
-              <span
-                style={{
-                  fontSize: '0.66rem',
-                  fontFamily: 'var(--font-mono)',
-                  color: '#FED7AA',
-                  letterSpacing: '0.06em',
-                  fontWeight: 600,
-                  textTransform: 'uppercase'
-                }}
-              >
-                STACKYR VENTURE ECOSYSTEM
-              </span>
-            </div>
-            <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>|</span>
             <span
               style={{
-                fontSize: '0.66rem',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: '#22C55E',
+                boxShadow: '0 0 8px #22C55E',
+                flexShrink: 0
+              }}
+            />
+            <span
+              className="hero-badge-title"
+              style={{
+                fontSize: '0.64rem',
+                fontFamily: 'var(--font-mono)',
+                color: '#FED7AA',
+                letterSpacing: '0.07em',
                 fontWeight: 600,
-                color: 'var(--accent-orange)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
+                textTransform: 'uppercase'
               }}
             >
-              Autonomous Intelligence Fabric
+              STACKYR VENTURE ECOSYSTEM
+            </span>
+            <span className="hero-badge-dot" style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '0.62rem' }}>•</span>
+            <span
+              className="hero-badge-fabric"
+              style={{
+                fontSize: '0.64rem',
+                fontWeight: 600,
+                color: 'var(--accent-orange)',
+                letterSpacing: '0.03em'
+              }}
+            >
+              AUTONOMOUS FABRIC
             </span>
           </div>
         </div>
 
-        {/* Central Headline & Tagline */}
-        <div style={{ textAlign: 'center', maxWidth: '940px', margin: '0 auto clamp(20px, 4vw, 36px) auto' }}>
+        {/* Central Headline & Tagline (Dominant, bold, visually centered) */}
+        <div style={{ textAlign: 'center', maxWidth: '940px', margin: '0 auto clamp(18px, 3.5vw, 32px) auto' }}>
           <h1
             style={{
-              fontSize: 'clamp(1.9rem, 7.5vw, 5.6rem)',
+              fontSize: 'clamp(2.45rem, 10.5vw, 5.8rem)',
               fontWeight: 900,
               letterSpacing: '-0.04em',
-              lineHeight: 1.05,
+              lineHeight: 1.02,
               color: '#FFFFFF',
               marginBottom: '14px',
-              textShadow: '0 10px 40px rgba(0, 0, 0, 0.8)'
+              textShadow: '0 10px 40px rgba(0, 0, 0, 0.85)'
             }}
           >
             STACKING <br />
@@ -254,11 +288,11 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
 
           <p
             style={{
-              fontSize: 'clamp(0.88rem, 2vw, 1.15rem)',
+              fontSize: 'clamp(0.86rem, 2.2vw, 1.15rem)',
               color: '#94A3B8',
               lineHeight: 1.55,
-              maxWidth: '680px',
-              margin: '0 auto 22px auto',
+              maxWidth: '660px',
+              margin: '0 auto 20px auto',
               textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)'
             }}
           >
@@ -313,30 +347,30 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
             maxWidth: '1080px',
             margin: '0 auto',
             position: 'relative',
-            borderRadius: 'clamp(18px, 3.2vw, 26px)',
+            borderRadius: 'clamp(16px, 3vw, 26px)',
             padding: 'clamp(6px, 1.2vw, 12px)',
             background: 'linear-gradient(180deg, rgba(255, 107, 0, 0.28) 0%, rgba(255, 255, 255, 0.05) 30%, rgba(9, 11, 16, 0.98) 100%)',
             border: '1px solid rgba(255, 107, 0, 0.45)',
-            boxShadow: '0 40px 120px -20px rgba(0, 0, 0, 0.98), 0 0 70px -10px rgba(255, 107, 0, 0.28), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
-            backdropFilter: 'blur(30px)',
-            WebkitBackdropFilter: 'blur(30px)',
+            boxShadow: '0 24px 70px -15px rgba(0, 0, 0, 0.95), 0 0 45px -10px rgba(255, 107, 0, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.25)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
             overflow: 'hidden',
             boxSizing: 'border-box',
             touchAction: 'pan-y'
           }}
-          className="animate-float"
+          className="hero-video-chassis-wrapper"
         >
-          {/* Ambient Video Backlight Aura (Breathes gently) */}
+          {/* Ambient Video Backlight Aura (Optimized GPU friendly) */}
           <div
+            className="hero-video-aura"
             style={{
               position: 'absolute',
-              inset: '-20px',
-              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 107, 0, 0.24) 0%, rgba(245, 158, 11, 0.06) 50%, transparent 75%)',
-              filter: 'blur(55px)',
+              inset: '-10px',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 107, 0, 0.18) 0%, rgba(245, 158, 11, 0.04) 50%, transparent 75%)',
+              filter: 'blur(28px)',
               pointerEvents: 'none',
               zIndex: 0,
-              animation: 'pulseGlow 4s ease-in-out infinite',
-              willChange: 'transform, opacity'
+              willChange: 'opacity'
             }}
           />
 
@@ -357,7 +391,7 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '9px 18px',
+                padding: '8px 14px',
                 background: 'rgba(12, 15, 24, 0.96)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                 pointerEvents: 'none',
@@ -365,25 +399,26 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
               }}
             >
               {/* Traffic light dots */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF5F56', opacity: 0.85, boxShadow: '0 0 6px rgba(255,95,86,0.5)' }} />
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFBD2E', opacity: 0.85, boxShadow: '0 0 6px rgba(255,189,46,0.5)' }} />
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27C93F', opacity: 0.85, boxShadow: '0 0 6px rgba(39,201,63,0.5)' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#FF5F56', opacity: 0.85, boxShadow: '0 0 5px rgba(255,95,86,0.5)' }} />
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#FFBD2E', opacity: 0.85, boxShadow: '0 0 5px rgba(255,189,46,0.5)' }} />
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#27C93F', opacity: 0.85, boxShadow: '0 0 5px rgba(39,201,63,0.5)' }} />
               </div>
 
               {/* Center status */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
                 <span style={{ position: 'relative', display: 'flex', width: '6px', height: '6px' }}>
                   <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22C55E', opacity: 0.75, animation: 'ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E' }} />
                 </span>
-                <span className="chassis-status-text" style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: '#CBD5E1', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                  KINETIC AUTONOMOUS MESH • 4K STREAM
+                <span className="chassis-status-text" style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: '#CBD5E1', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  <span className="chassis-text-full">KINETIC AUTONOMOUS MESH • 4K STREAM</span>
+                  <span className="chassis-text-short">KINETIC MESH • 4K</span>
                 </span>
               </div>
 
               {/* FPS Counter */}
-              <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-orange)', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-orange)', fontWeight: 700 }}>
                 60 FPS
               </div>
             </div>
