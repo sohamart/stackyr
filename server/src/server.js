@@ -13,14 +13,18 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 
 
+import { ensureDefaultAdmin } from './controllers/authController.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB (or local persistent fallback)
-connectDB();
+// Connect to MongoDB (or local persistent fallback) and sync admin credentials
+connectDB().then(() => {
+  ensureDefaultAdmin();
+});
 
 // Middleware
 app.use(cors({

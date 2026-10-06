@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 import { User } from '../models/User.js';
 import { generateToken } from '../middleware/auth.js';
 import { isFallbackActive, getFallbackDb, saveFallbackDb } from '../config/db.js';
@@ -67,38 +68,67 @@ function resetAttempts(key) {
   attemptTracker.delete(key);
 }
 
-export function ensureDefaultAdmin() {
+export async function ensureDefaultAdmin() {
   const targetEmail = getAdminEmail();
   const targetPass = getAdminPassword();
 
+  // 1. Sync Fallback DB
   const db = getFallbackDb();
   if (!db.users) db.users = [];
 
-  let admin = db.users.find(u => u.email === targetEmail || u.role === 'admin');
+  let fallbackAdmin = db.users.find(u => u.email === targetEmail || u.role === 'admin');
 
-  if (!admin) {
+  if (!fallbackAdmin) {
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(targetPass, salt);
-    admin = {
+    fallbackAdmin = {
       _id: 'user_admin_1',
       name: 'Stackyr Super Admin',
       email: targetEmail,
-      password: hash,
+      password: bcrypt.hashSync(targetPass, salt),
       role: 'admin',
       createdAt: new Date().toISOString()
     };
-    db.users.push(admin);
+    db.users.push(fallbackAdmin);
     saveFallbackDb();
     console.log(`[Stackyr Auth] Seeded primary administrator: ${targetEmail}`);
   } else {
-    // Verify password hash matches configured admin password
-    const matches = bcrypt.compareSync(targetPass, admin.password);
-    if (!matches || admin.email !== targetEmail) {
+    const matches = bcrypt.compareSync(targetPass, fallbackAdmin.password);
+    if (!matches || fallbackAdmin.email !== targetEmail) {
       const salt = bcrypt.genSaltSync(10);
-      admin.password = bcrypt.hashSync(targetPass, salt);
-      admin.email = targetEmail;
+      fallbackAdmin.password = bcrypt.hashSync(targetPass, salt);
+      fallbackAdmin.email = targetEmail;
       saveFallbackDb();
       console.log(`[Stackyr Auth] Synchronized administrator credentials with environment.`);
+    }
+  }
+
+  // 2. Sync MongoDB Atlas if connected
+  if (!isFallbackActive()) {
+    try {
+      let mongoAdmin = await User.findOne({ email: targetEmail });
+      if (!mongoAdmin) {
+        mongoAdmin = await User.findOne({ role: 'admin' });
+      }
+
+      if (!mongoAdmin) {
+        await User.create({
+          name: 'Stackyr Super Admin',
+          email: targetEmail,
+          password: targetPass,
+          role: 'admin'
+        });
+        console.log(`[Stackyr Auth] Seeded primary administrator in MongoDB Atlas: ${targetEmail}`);
+      } else {
+        const matches = await mongoAdmin.matchPassword(targetPass);
+        if (!matches || mongoAdmin.email !== targetEmail) {
+          mongoAdmin.email = targetEmail;
+          mongoAdmin.password = targetPass; // pre-save will re-hash
+          await mongoAdmin.save();
+          console.log(`[Stackyr Auth] Synchronized administrator in MongoDB Atlas.`);
+        }
+      }
+    } catch (err) {
+      console.warn('[Stackyr Auth] MongoDB Atlas admin sync note:', err.message);
     }
   }
 }
@@ -227,10 +257,11 @@ export async function login(req, res) {
 export async function getMe(req, res) {
   try {
     const userId = req.user.id;
+    const userEmail = req.user.email;
 
     if (isFallbackActive()) {
-      ensureDefaultAdmin();
-      const user = getFallbackDb().users.find(u => u._id === userId || u.email === req.user.email);
+      await ensureDefaultAdmin();
+      const user = getFallbackDb().users.find(u => u._id === userId || u.email === userEmail);
       if (!user) {
         return res.status(404).json({ success: false, message: 'Administrator account not found.' });
       }
@@ -245,7 +276,14 @@ export async function getMe(req, res) {
       });
     }
 
-    const user = await User.findById(userId).select('-password');
+    let user = null;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      user = await User.findById(userId).select('-password');
+    }
+    if (!user && userEmail) {
+      user = await User.findOne({ email: userEmail }).select('-password');
+    }
+
     if (!user) {
       return res.status(404).json({ success: false, message: 'Administrator account not found.' });
     }
