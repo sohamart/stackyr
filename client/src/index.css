@@ -720,20 +720,6 @@ button {
   transform: translateZ(0);
 }
 
-/* Video Chassis Text Responsiveness */
-.chassis-text-short {
-  display: none;
-}
-
-@media (max-width: 640px) {
-  .chassis-text-full {
-    display: none !important;
-  }
-  .chassis-text-short {
-    display: inline !important;
-  }
-}
-
 /* Mobile Hero Status Pill: Ultra-Compact & Elegant Micro-Chip */
 @media (max-width: 640px) {
   .hero-status-pill {

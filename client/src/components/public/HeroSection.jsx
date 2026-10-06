@@ -390,44 +390,6 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
               zIndex: 1
             }}
           >
-            {/* Top Chassis Bar (Ultra-modern minimal device header) */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '8px 14px',
-                background: 'rgba(12, 15, 24, 0.96)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                pointerEvents: 'none',
-                userSelect: 'none'
-              }}
-            >
-              {/* Traffic light dots */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#FF5F56', opacity: 0.85, boxShadow: '0 0 5px rgba(255,95,86,0.5)' }} />
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#FFBD2E', opacity: 0.85, boxShadow: '0 0 5px rgba(255,189,46,0.5)' }} />
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#27C93F', opacity: 0.85, boxShadow: '0 0 5px rgba(39,201,63,0.5)' }} />
-              </div>
-
-              {/* Center status */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <span style={{ position: 'relative', display: 'flex', width: '6px', height: '6px' }}>
-                  <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22C55E', opacity: 0.75, animation: 'ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E' }} />
-                </span>
-                <span className="chassis-status-text" style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: '#CBD5E1', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  <span className="chassis-text-full">KINETIC AUTONOMOUS MESH • 4K STREAM</span>
-                  <span className="chassis-text-short">KINETIC MESH • 4K</span>
-                </span>
-              </div>
-
-              {/* FPS Counter */}
-              <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-orange)', fontWeight: 700 }}>
-                60 FPS
-              </div>
-            </div>
-
             {/* Showcase Media Container (16:9 - Seamlessly plays Cloudinary, ImageKit, YouTube, Vimeo, or MP4) */}
             <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', overflow: 'hidden' }}>
               {media.type === 'video' && (
@@ -561,10 +523,6 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
             padding: 10px 12px !important;
             background: rgba(255, 255, 255, 0.02) !important;
             border-radius: 12px !important;
-          }
-          .chassis-status-text {
-            font-size: 0.54rem !important;
-            letter-spacing: 0.04em !important;
           }
         }
       `}</style>
