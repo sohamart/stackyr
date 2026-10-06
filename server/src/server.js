@@ -21,10 +21,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB (or local persistent fallback) and sync admin credentials
-connectDB().then(() => {
-  ensureDefaultAdmin();
-});
+// Connect to MongoDB and sync admin on local startup (serverless handled in middleware)
+if (!process.env.VERCEL) {
+  connectDB().then(() => {
+    ensureDefaultAdmin();
+  });
+}
 
 // Middleware
 app.use(cors({
@@ -84,11 +86,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`\n======================================================`);
-  console.log(`  ⚡ STACKYR CORE BACKEND RUNNING ON http://localhost:${PORT}`);
-  console.log(`  ⚡ STACKING INTELLIGENCE VENTURE ECOSYSTEM API READY`);
-  console.log(`======================================================\n`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`\n======================================================`);
+    console.log(`  ⚡ STACKYR CORE BACKEND RUNNING ON http://localhost:${PORT}`);
+    console.log(`  ⚡ STACKING INTELLIGENCE VENTURE ECOSYSTEM API READY`);
+    console.log(`======================================================\n`);
+  });
+}
 
 export default app;
