@@ -1,18 +1,34 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const UPLOAD_DIR = path.resolve(__dirname, '../../uploads');
 
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// In Vercel serverless environment, only /tmp is writable
+const UPLOAD_DIR = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'stackyr-uploads')
+  : path.resolve(__dirname, '../../uploads');
+
+try {
+  if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+} catch (err) {
+  // Graceful catch for read-only sandboxes
 }
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    try {
+      if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+      }
+    } catch (e) {
+      // ignore
+    }
     cb(null, UPLOAD_DIR);
   },
   filename: function (req, file, cb) {

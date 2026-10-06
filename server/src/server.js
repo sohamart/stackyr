@@ -49,11 +49,15 @@ app.use(async (req, res, next) => {
 
 // Static uploads folder
 const uploadDir = path.resolve(__dirname, '../uploads');
-app.use('/uploads', express.static(uploadDir));
+try {
+  app.use('/uploads', express.static(uploadDir));
+} catch (e) {}
 
 // Also serve client public assets if needed
 const clientPublicDir = path.resolve(__dirname, '../../client/public');
-app.use(express.static(clientPublicDir));
+try {
+  app.use(express.static(clientPublicDir));
+} catch (e) {}
 
 // API Routes
 app.use('/api/brands', brandRoutes);
