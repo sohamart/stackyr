@@ -1,6 +1,24 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 export default function TrustMarquee() {
+  const containerRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05, rootMargin: '100px 0px' }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const partners = [
     {
       name: 'NVIDIA',
@@ -118,6 +136,7 @@ export default function TrustMarquee() {
 
   return (
     <div
+      ref={containerRef}
       style={{
         position: 'relative',
         width: '100%',
@@ -176,8 +195,11 @@ export default function TrustMarquee() {
         }}
       />
 
-      {/* Infinite Scrolling Track */}
-      <div className="marquee-track">
+      {/* Infinite Scrolling Track - Hardware 3D Composited */}
+      <div
+        className="marquee-track"
+        style={{ animationPlayState: isVisible ? 'running' : 'paused' }}
+      >
         {duplicatedList.map((partner, index) => (
           <div
             key={`${partner.name}-${index}`}
@@ -189,11 +211,13 @@ export default function TrustMarquee() {
               padding: '10px 22px',
               margin: '0 8px',
               borderRadius: '9999px',
-              background: 'rgba(16, 18, 26, 0.72)',
+              background: 'rgba(16, 18, 26, 0.85)',
               border: '1px solid rgba(255, 255, 255, 0.08)',
               flexShrink: 0,
               cursor: 'default',
-              transition: 'all 0.25s ease'
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+              transition: 'border-color 0.2s ease, background 0.2s ease'
             }}
           >
             {/* Unified Monochrome Platinum SVG Logo */}

@@ -27,12 +27,13 @@ export default function WebindSection({ webindData }) {
           position: 'absolute',
           top: '20%',
           left: '50%',
-          transform: 'translateX(-50%)',
+          transform: 'translateX(-50%) translateZ(0)',
           width: '1000px',
           height: '600px',
           background: 'radial-gradient(ellipse at center, rgba(255, 107, 0, 0.1) 0%, rgba(245, 158, 11, 0.02) 60%, transparent 75%)',
-          filter: 'blur(90px)',
-          pointerEvents: 'none'
+          filter: 'blur(45px)',
+          pointerEvents: 'none',
+          backfaceVisibility: 'hidden'
         }}
       />
 

@@ -81,7 +81,7 @@ export default function FeaturedSection({ brands = [], onSelectBrand }) {
           boxSizing: 'border-box'
         }}
       >
-        {/* Subtle accent light bloom */}
+        {/* Subtle accent light bloom - Hardware isolated */}
         <div
           style={{
             position: 'absolute',
@@ -91,9 +91,11 @@ export default function FeaturedSection({ brands = [], onSelectBrand }) {
             height: '350px',
             borderRadius: '50%',
             background: accent,
-            filter: 'blur(100px)',
-            opacity: 0.18,
-            pointerEvents: 'none'
+            filter: 'blur(50px)',
+            opacity: 0.16,
+            pointerEvents: 'none',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden'
           }}
         />
 

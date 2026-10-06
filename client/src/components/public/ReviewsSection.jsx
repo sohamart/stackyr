@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Star, CheckCircle2, Sparkles } from 'lucide-react';
 
 export default function ReviewsSection() {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05, rootMargin: '100px 0px' }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const reviewsRow1 = [
     {
       id: 1,
@@ -110,14 +128,15 @@ export default function ReviewsSection() {
         margin: '0 6px',
         padding: '16px 18px',
         borderRadius: '16px',
-        background: 'rgba(12, 14, 22, 0.75)',
+        background: 'rgba(14, 16, 26, 0.94)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        backdropFilter: 'blur(20px)',
         boxShadow: '0 8px 24px -5px rgba(0, 0, 0, 0.65)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
         transition: 'border-color 0.2s ease, background 0.2s ease'
       }}
     >
@@ -259,6 +278,7 @@ export default function ReviewsSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="reviews"
       style={{
         position: 'relative',
@@ -374,16 +394,22 @@ export default function ReviewsSection() {
           }}
         />
 
-        {/* Row 1: Moves Left (Right to Left) - Continuous, Never pauses */}
+        {/* Row 1: Moves Left (Right to Left) - Hardware 3D Accelerated */}
         <div style={{ marginBottom: '10px' }}>
-          <div className="reviews-marquee-left">
+          <div
+            className="reviews-marquee-left"
+            style={{ animationPlayState: isVisible ? 'running' : 'paused' }}
+          >
             {duplicatedRow1.map((rev, idx) => renderCard(rev, idx))}
           </div>
         </div>
 
-        {/* Row 2: Moves Right (Left to Right) - Opposite Direction, Continuous, Never pauses */}
+        {/* Row 2: Moves Right (Left to Right) - Hardware 3D Accelerated */}
         <div>
-          <div className="reviews-marquee-right">
+          <div
+            className="reviews-marquee-right"
+            style={{ animationPlayState: isVisible ? 'running' : 'paused' }}
+          >
             {duplicatedRow2.map((rev, idx) => renderCard(rev, idx))}
           </div>
         </div>
@@ -391,33 +417,40 @@ export default function ReviewsSection() {
 
       <style>{`
         @keyframes scrollReviewsLeft {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
 
         @keyframes scrollReviewsRight {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
+          0% { transform: translate3d(-50%, 0, 0); }
+          100% { transform: translate3d(0, 0, 0); }
         }
 
-        /* Continuous Smooth Motion - NEVER STOPS ON HOVER */
-        .reviews-marquee-left {
-          display: flex;
-          width: max-content;
-          animation: scrollReviewsLeft 34s linear infinite;
-          will-change: transform;
-        }
-
+        /* Continuous Smooth Motion - Completely Isolated GPU Compositor Layer */
+        .reviews-marquee-left,
         .reviews-marquee-right {
           display: flex;
           width: max-content;
-          animation: scrollReviewsRight 34s linear infinite;
           will-change: transform;
+          transform: translate3d(0, 0, 0);
+          -webkit-transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          perspective: 1000px;
+          contain: layout paint;
+        }
+
+        .reviews-marquee-left {
+          animation: scrollReviewsLeft 34s linear infinite;
+        }
+
+        .reviews-marquee-right {
+          animation: scrollReviewsRight 34s linear infinite;
         }
 
         .review-compact-card:hover {
           border-color: rgba(255, 107, 0, 0.35) !important;
-          background: rgba(16, 20, 32, 0.88) !important;
+          background: rgba(18, 22, 34, 0.98) !important;
         }
 
         @media (max-width: 640px) {

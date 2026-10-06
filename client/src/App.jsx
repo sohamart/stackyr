@@ -112,6 +112,21 @@ export default function App() {
 
     window.__lenis = lenis;
 
+    // High-performance anti-stutter scroll handler (prevents hover style recalculations during active scroll)
+    let scrollTimeout;
+    const handleActiveScroll = () => {
+      if (!document.body.classList.contains('is-scrolling')) {
+        document.body.classList.add('is-scrolling');
+      }
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        document.body.classList.remove('is-scrolling');
+      }, 90);
+    };
+
+    lenis.on('scroll', handleActiveScroll);
+    window.addEventListener('scroll', handleActiveScroll, { passive: true });
+
     let rafId;
     function raf(time) {
       lenis.raf(time);
@@ -120,6 +135,9 @@ export default function App() {
     rafId = requestAnimationFrame(raf);
 
     return () => {
+      clearTimeout(scrollTimeout);
+      document.body.classList.remove('is-scrolling');
+      window.removeEventListener('scroll', handleActiveScroll);
       cancelAnimationFrame(rafId);
       lenis.destroy();
       window.__lenis = null;
