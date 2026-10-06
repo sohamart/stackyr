@@ -43,7 +43,8 @@ export function saveFallbackDb() {
   try {
     fs.writeFileSync(DATA_FILE, JSON.stringify(memoryDb, null, 2), 'utf-8');
   } catch (err) {
-    console.error('Error saving local db.json:', err.message);
+    // Read-only filesystem in serverless environments (Vercel)
+    console.warn('[Stackyr DB] Memory state updated (disk write skipped):', err.message);
   }
 }
 
@@ -81,17 +82,22 @@ function isMongoPortOpen(host = '127.0.0.1', port = 27017, timeout = 600) {
 }
 
 export async function connectDB() {
-  const uri = process.env.MONGODB_URI;
+  const rawUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
-  if (uri) {
+  if (rawUri) {
     try {
+      let uri = rawUri.trim();
+      // If ends with trailing slash, default to stackyr database
+      if (uri.endsWith('/')) {
+        uri += 'stackyr';
+      }
       mongoose.set('strictQuery', false);
-      await mongoose.connect(uri, { serverSelectionTimeoutMS: 2000 });
-      console.log(`[Stackyr DB] Connected to MongoDB URI: ${uri}`);
+      await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
+      console.log(`[Stackyr DB] Successfully connected to MongoDB Atlas.`);
       isUsingFallback = false;
       return;
     } catch (err) {
-      console.warn(`[Stackyr DB] Failed to connect to MONGODB_URI: ${err.message}. Using fallback engine.`);
+      console.warn(`[Stackyr DB] Failed to connect to MongoDB: ${err.message}. Using fallback engine.`);
     }
   }
 

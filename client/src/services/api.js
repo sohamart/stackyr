@@ -162,7 +162,13 @@ export async function loginAdmin(email, password) {
     if (contentType.includes('application/json')) {
       data = await res.json().catch(() => ({}));
     } else {
-      throw new Error('API server returned unexpected response. Ensure backend is running on port 5000.');
+      if (res.status === 404) {
+        throw new Error(`API endpoint not found (404). Check Vercel project Root Directory & service routing.`);
+      } else if (res.status >= 500) {
+        throw new Error(`Server error (${res.status}). Verify Vercel Environment Variables (MONGO_URI / JWT_SECRET).`);
+      } else {
+        throw new Error(`Backend returned non-JSON response (${res.status}). Verify Vercel backend service.`);
+      }
     }
 
     if (!res.ok || !data.success) {
@@ -171,7 +177,7 @@ export async function loginAdmin(email, password) {
     return data;
   } catch (err) {
     if (err.name === 'TypeError' || err.message.toLowerCase().includes('failed to fetch')) {
-      throw new Error('Backend server is offline or unreachable on port 5000. Please run "npm run server".');
+      throw new Error('Backend server is offline or unreachable. Please check network/service status.');
     }
     throw err;
   }
