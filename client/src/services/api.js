@@ -150,16 +150,31 @@ export async function uploadAsset(file) {
 }
 
 export async function loginAdmin(email, password) {
-  const res = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || 'Invalid login credentials');
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const contentType = res.headers.get('content-type') || '';
+    let data = {};
+    if (contentType.includes('application/json')) {
+      data = await res.json().catch(() => ({}));
+    } else {
+      throw new Error('API server returned unexpected response. Ensure backend is running on port 5000.');
+    }
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || 'Invalid administrator credentials');
+    }
+    return data;
+  } catch (err) {
+    if (err.name === 'TypeError' || err.message.toLowerCase().includes('failed to fetch')) {
+      throw new Error('Backend server is offline or unreachable on port 5000. Please run "npm run server".');
+    }
+    throw err;
   }
-  return res.json();
 }
 
 export async function fetchMe() {

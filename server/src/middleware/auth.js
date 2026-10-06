@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'stackyr_secret_key_2026_super_secure';
+const getJwtSecret = () => process.env.JWT_SECRET || 'stackyr_secret_key_2026_super_secure';
 
 export function generateToken(user) {
   return jwt.sign(
     { id: user._id || user.id, email: user.email, role: user.role || 'admin' },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: '30d' }
   );
 }
@@ -21,14 +21,14 @@ export function protect(req, res, next) {
   }
 
   if (!token) {
-    return res.status(401).json({ message: 'Not authorized, no token provided' });
+    return res.status(401).json({ success: false, message: 'Not authorized, no token provided' });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Not authorized, token invalid or expired' });
+    return res.status(401).json({ success: false, message: 'Not authorized, session invalid or expired' });
   }
 }

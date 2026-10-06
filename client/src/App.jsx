@@ -201,20 +201,31 @@ export default function App() {
   }, [isAuthenticated]);
 
   // If in Admin Console
-  if (currentPage === 'admin' && isAuthenticated) {
-    return (
-      <AdminLayout
-        brands={brands}
-        content={content}
-        onRefresh={loadData}
-        onExitAdmin={handleExitAdmin}
-        onTogglePreviewMode={() => {
-          setIsPreviewMode(!isPreviewMode);
-          setCurrentPage('home');
-        }}
-        isPreviewMode={isPreviewMode}
-      />
-    );
+  if (currentPage === 'admin') {
+    if (isAuthenticated) {
+      return (
+        <AdminLayout
+          brands={brands}
+          content={content}
+          onRefresh={loadData}
+          onExitAdmin={handleExitAdmin}
+          onTogglePreviewMode={() => {
+            setIsPreviewMode(!isPreviewMode);
+            setCurrentPage('home');
+          }}
+          isPreviewMode={isPreviewMode}
+        />
+      );
+    } else {
+      return (
+        <div style={{ position: 'relative', minHeight: '100vh', background: '#060608' }}>
+          <AdminLogin
+            onSuccess={handleLoginSuccess}
+            onClose={handleExitAdmin}
+          />
+        </div>
+      );
+    }
   }
 
   return (

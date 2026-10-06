@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layers, Sparkles, Menu, X, ArrowUpRight, Cpu, Home, Send, Shield, Zap, ChevronRight, Terminal, Award } from 'lucide-react';
+import { Layers, Sparkles, Menu, X, ArrowUpRight, Cpu, Home, Send, Shield, Zap, ChevronRight, Terminal, Award, Lock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, siteContent, brandCount = 8 }) {
@@ -468,6 +468,56 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
           >
             <span>Get in Touch</span>
             <ChevronRight size={13} color="var(--accent-orange)" />
+          </button>
+
+          {/* PC / Desktop Admin Login Button */}
+          <button
+            type="button"
+            onClick={onOpenAdmin}
+            className="desktop-nav"
+            title={isAuthenticated ? 'Open Sovereign Admin Console' : 'Administrator Portal Login'}
+            style={{
+              display: 'none',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '7px 14px',
+              borderRadius: '9999px',
+              fontSize: '0.78rem',
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 700,
+              background: isAuthenticated
+                ? 'rgba(34, 197, 94, 0.12)'
+                : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${isAuthenticated ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.14)'}`,
+              color: isAuthenticated ? '#4ADE80' : '#E2E8F0',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent-orange)';
+              e.currentTarget.style.color = '#FFFFFF';
+              e.currentTarget.style.background = 'rgba(255, 107, 0, 0.18)';
+              e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 107, 0, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = isAuthenticated ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.14)';
+              e.currentTarget.style.color = isAuthenticated ? '#4ADE80' : '#E2E8F0';
+              e.currentTarget.style.background = isAuthenticated ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            {isAuthenticated ? (
+              <>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 6px #22C55E' }} />
+                <span>Console Active</span>
+              </>
+            ) : (
+              <>
+                <Lock size={12} color="var(--accent-orange)" />
+                <span>Admin Login</span>
+              </>
+            )}
           </button>
 
           {/* Mobile Menu Toggle Button */}

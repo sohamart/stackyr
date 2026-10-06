@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, ShieldCheck, ArrowUpRight, Cpu, Terminal, Sparkles } from 'lucide-react';
+import { Layers, ShieldCheck, ArrowUpRight, Cpu, Terminal, Sparkles, Lock } from 'lucide-react';
 
 export default function Footer({ onNavigate, onOpenAdmin }) {
   const handleNav = (page) => {
@@ -102,6 +102,27 @@ export default function Footer({ onNavigate, onOpenAdmin }) {
               <button onClick={() => handleNav('capabilities')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Deep-Tech Capabilities</button>
               <button onClick={() => handleNav('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>About Us & Ethos</button>
               <button onClick={() => handleNav('contact')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Contact & Partner</button>
+              <button
+                onClick={onOpenAdmin}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--accent-orange)',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  padding: 0,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontWeight: 600,
+                  transition: 'opacity 0.2s'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+              >
+                <Lock size={13} />
+                <span>Admin Login</span>
+              </button>
             </div>
           </div>
 
@@ -175,8 +196,25 @@ export default function Footer({ onNavigate, onOpenAdmin }) {
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Shortcut: <kbd style={{ padding: '2px 6px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}>Ctrl+Shift+A</kbd></span>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <button
+              onClick={onOpenAdmin}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: 0,
+                fontSize: '0.8rem'
+              }}
+              title="Open Admin Console"
+            >
+              <span>Admin Access:</span>
+              <kbd style={{ padding: '2px 6px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-orange)' }}>Ctrl+Shift+A</kbd>
+            </button>
             <a href="#" style={{ color: 'var(--text-secondary)' }}>Privacy Policy</a>
             <a href="#" style={{ color: 'var(--text-secondary)' }}>Terms of Service</a>
           </div>
