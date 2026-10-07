@@ -4,9 +4,9 @@ import {
   Globe, MessageSquare, Terminal, Clock, Copy
 } from 'lucide-react';
 
-export default function HomeContactCard({ onNavigate }) {
+export default function HomeContactCard({ onNavigate, contactData }) {
   const [copied, setCopied] = useState(false);
-  const email = 'ventures@stackyr.io';
+  const email = contactData?.email || 'ventures@stackyr.io';
 
   const handleCopyEmail = (e) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ export default function HomeContactCard({ onNavigate }) {
             overflow: 'hidden'
           }}
         >
-          {/* Ambient Corner Glow */}
+          {/* Ambient Corner Glow (Optimized Zero-Blur Raster) */}
           <div
             style={{
               position: 'absolute',
@@ -45,8 +45,7 @@ export default function HomeContactCard({ onNavigate }) {
               width: '450px',
               height: '450px',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(255, 107, 0, 0.18) 0%, rgba(245, 158, 11, 0.05) 50%, transparent 70%)',
-              filter: 'blur(60px)',
+              background: 'radial-gradient(circle, rgba(255, 107, 0, 0.16) 0%, rgba(245, 158, 11, 0.05) 45%, rgba(255, 107, 0, 0.01) 60%, transparent 75%)',
               pointerEvents: 'none'
             }}
           />
@@ -94,7 +93,7 @@ export default function HomeContactCard({ onNavigate }) {
                     textTransform: 'uppercase'
                   }}
                 >
-                  DIRECT PROTOCOL COLLABORATION
+                  {contactData?.badge || 'DIRECT PROTOCOL COLLABORATION'}
                 </span>
               </div>
 
@@ -108,7 +107,7 @@ export default function HomeContactCard({ onNavigate }) {
                   lineHeight: 1.15
                 }}
               >
-                Ready to Compound <span className="text-gradient">Intelligence?</span>
+                {contactData?.title || 'Ready to Compound'} <span className="text-gradient">{contactData?.titleAccent || 'Intelligence?'}</span>
               </h2>
 
               <p
@@ -119,7 +118,7 @@ export default function HomeContactCard({ onNavigate }) {
                   marginBottom: '26px'
                 }}
               >
-                Whether you're deploying bare-metal AI clusters, pitching a venture to the Stackyr ecosystem, or integrating Webind edge compute, our leadership collective is ready.
+                {contactData?.description || "Whether you're deploying bare-metal AI clusters, pitching a venture to the Stackyr ecosystem, or integrating Webind edge compute, our leadership collective is ready."}
               </p>
 
               {/* Action Buttons */}
@@ -137,7 +136,7 @@ export default function HomeContactCard({ onNavigate }) {
                     gap: '10px'
                   }}
                 >
-                  <span>Open Contact Portal</span>
+                  <span>{contactData?.primaryBtnText || 'Open Contact Portal'}</span>
                   <Send size={16} />
                 </button>
 
@@ -155,7 +154,7 @@ export default function HomeContactCard({ onNavigate }) {
                   }}
                 >
                   {copied ? <Check size={16} color="#22C55E" /> : <Copy size={16} color="var(--accent-orange)" />}
-                  <span>{copied ? 'Copied ventures@stackyr.io' : 'Copy Direct Email'}</span>
+                  <span>{copied ? `Copied ${email}` : (contactData?.copyBtnText || 'Copy Direct Email')}</span>
                 </button>
               </div>
 
@@ -163,7 +162,7 @@ export default function HomeContactCard({ onNavigate }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontFamily: 'var(--font-mono)', color: '#94A3B8' }}>
                   <Clock size={13} color="var(--accent-orange)" />
-                  <span>P99 First Response: &lt; 4 Hours</span>
+                  <span>{contactData?.responseNotice || 'P99 First Response: < 4 Hours'}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontFamily: 'var(--font-mono)', color: '#94A3B8' }}>
                   <Shield size={13} color="#22C55E" />

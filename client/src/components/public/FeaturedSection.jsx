@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Sparkles, ArrowRight, ShieldCheck, Zap, Activity, Cpu, ArrowUpRight } from 'lucide-react';
 
-export default function FeaturedSection({ brands = [], onSelectBrand }) {
+export default function FeaturedSection({ brands = [], onSelectBrand, featuredData }) {
   const featuredBrands = brands.filter((b) => b.featured);
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   if (featuredBrands.length === 0) return null;
   const currentBrand = featuredBrands[selectedIdx] || featuredBrands[0];
   const accent = currentBrand.accentColor || '#FF6B00';
+
+  const badgeText = featuredData?.badge || 'FEATURED VENTURE SPOTLIGHT';
+  const headingTitle = featuredData?.title || 'Pillars of';
+  const headingAccent = featuredData?.titleAccent || 'Compounding Scale';
 
   return (
     <section id="featured" className="section-pad" style={{ position: 'relative' }}>
@@ -17,10 +21,10 @@ export default function FeaturedSection({ brands = [], onSelectBrand }) {
           <div>
             <div className="badge-pill" style={{ marginBottom: '12px' }}>
               <Sparkles size={13} />
-              <span>FEATURED VENTURE SPOTLIGHT</span>
+              <span>{badgeText}</span>
             </div>
             <h2 style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)', fontWeight: 800, color: '#FFFFFF' }}>
-              Pillars of <span className="text-gradient">Compounding Scale</span>
+              {headingTitle} <span className="text-gradient">{headingAccent}</span>
             </h2>
           </div>
 

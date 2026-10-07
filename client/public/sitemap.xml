@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Home Ecosystem Root -->
+  <url>
+    <loc>https://stackyr.io/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://stackyr.io/og-image.png</image:loc>
+      <image:title>Stackyr — Stacking Intelligence Ecosystem</image:title>
+      <image:caption>Autonomous venture ecosystem, AI architectures, and high-velocity web infrastructure.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Venture Catalog & Portfolio Brands -->
+  <url>
+    <loc>https://stackyr.io/#brands</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Stackyr Community & Engineering Collective -->
+  <url>
+    <loc>https://stackyr.io/#community</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- WEBIND Flagship Autonomous Edge Web Infrastructure -->
+  <url>
+    <loc>https://stackyr.io/#webind</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Foundational Capabilities Grid -->
+  <url>
+    <loc>https://stackyr.io/#capabilities</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- The Stackyr Ethos, Genesis & Story -->
+  <url>
+    <loc>https://stackyr.io/#about</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Direct Venture Dialogue & Partnership Portal -->
+  <url>
+    <loc>https://stackyr.io/#contact</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

@@ -381,6 +381,111 @@ export const initialSiteContent = {
     iconLogoDark: "/stackyr-icon-dark.png",
     iconLogoLight: "/stackyr-icon-light.png",
     heroBgStyle: "mesh-particle"
+  },
+  trustMarquee: {
+    badge: "TRUSTED BY GLOBAL ARCHITECTS & SYSTEM ENGINEERS"
+  },
+  homeFeatured: {
+    badge: "FEATURED VENTURE SPOTLIGHT",
+    title: "Pillars of",
+    titleAccent: "Compounding Scale",
+    viewAllText: "Explore All 8+ Stackyr Ventures & Stealth Pipeline"
+  },
+  homeEthosBanner: {
+    badge: "WHY WE STACK INTELLIGENCE",
+    title: "Intelligence compounds when",
+    titleAccent: "layered synergistically.",
+    paragraph: "Stackyr eliminates bureaucratic drag and venture silos. Every stacked entity feeds telemetry, cryptographic security, and computational edge into every other.",
+    primaryBtnText: "Read Full Story & Vision",
+    secondaryBtnText: "Initiate Dialogue"
+  },
+  homeReviews: {
+    badge: "VERIFIED ARCHITECTURAL REVIEWS",
+    title: "Validated by Systems Architects &",
+    titleAccent: "Founders.",
+    subtitle: "Real-world telemetry and verified architectural feedback across 14,000+ deployments.",
+    ratingScore: "4.98 / 5.0",
+    ratingSubtext: "Across 14,000+ Global Nodes"
+  },
+  homeContactCard: {
+    badge: "DIRECT PROTOCOL COLLABORATION",
+    title: "Ready to Compound",
+    titleAccent: "Intelligence?",
+    description: "Whether you're deploying bare-metal AI clusters, pitching a venture to the Stackyr ecosystem, or integrating Webind edge compute, our leadership collective is ready.",
+    primaryBtnText: "Open Contact Portal",
+    copyBtnText: "Copy Sovereign Email",
+    email: "ventures@stackyr.io",
+    responseNotice: "Average cryptographic SLA handshake: < 4 hours"
+  },
+  community: {
+    badge: "DEVELOPER & HACKER COLLECTIVE • 14,200+ SYSTEMS ARCHITECTS",
+    title: "Stackyr Community:",
+    titleAccent: "The Engineering Crucible.",
+    description: "An open technical collective within the Stackyr ecosystem. Where systems architects, kernel hackers, and AI researchers gather to stress-test zero-trust enclaves, optimize edge WASM runtimes, and build sovereign computing architectures.",
+    discordLink: "https://discord.gg/stackyr",
+    discordButtonText: "Enter Stackyr Community Discord",
+    githubLink: "https://github.com/stackyr",
+    githubButtonText: "Explore GitHub Repos",
+    stats: [
+      { label: "Active Engineers", value: "14,200+" },
+      { label: "Micro-Grants Disbursed", value: "$250,000+" },
+      { label: "Specialized Guilds", value: "18 Units" },
+      { label: "Open-Source Repos", value: "94 Codebases" }
+    ],
+    pillars: [
+      {
+        title: "Open Source Swarms & Bounties",
+        desc: "Hack on bare-metal WASM kernels, distributed mesh routers, and cryptographic primitives. Earn micro-grants and tokenized equity allocations.",
+        badge: "$250K+ In Grant Pools"
+      },
+      {
+        title: "Cryptographic Research Working Groups",
+        desc: "Weekly peer review on zero-knowledge SNARKs, sub-watt photonic computing, and sovereign decentralized database models.",
+        badge: "18 Active Guilds"
+      },
+      {
+        title: "Quarterly Deep-Tech Hackathons",
+        desc: "Build high-velocity ventures on top of the Stackyr infrastructure. Winning teams receive incubation and seed funding from Stackyr Ventures.",
+        badge: "Next: Q4 Global Sprint"
+      },
+      {
+        title: "Bare-Metal Edge Telemetry Lab",
+        desc: "Direct access to 14,280 distributed silicon nodes and bare-metal hardware sandboxes to stress-test your AI inference models.",
+        badge: "Free Tier Available"
+      }
+    ],
+    workingGroups: [
+      { name: "WASM Edge Runtimes", lead: "Dr. Aris Thorne", count: "1,420 members", status: "Active Sprint" },
+      { name: "zk-SNARK Enclave Security", lead: "Marcus Vance", count: "980 members", status: "Drafting Spec" },
+      { name: "Photonic Silicon Optimization", lead: "Elena Rostova", count: "840 members", status: "Benchmarking" },
+      { name: "Autonomous Agent Orchestration", lead: "Siddharth Sen", count: "2,150 members", status: "Deploying V2" }
+    ]
+  },
+  footer: {
+    brandName: "STACKYR",
+    brandTagline: "STACKING INTELLIGENCE",
+    description: "The unified compound architecture orchestrating breakthrough AI ventures, high-velocity edge networks like WEBIND, and sovereign computing fabrics.",
+    statusText: "GLOBAL MESH OPERATIONAL • 99.999%",
+    col2Title: "ARCHITECTURE NAV",
+    col3Title: "VENTURE CONSTELLATION",
+    col4Title: "CONNECT & BUILD",
+    col4Description: "Join the engineering collective, submit venture pitches, or access bare-metal testnets.",
+    discordText: "Discord Collective",
+    discordUrl: "https://discord.gg/stackyr",
+    githubText: "GitHub Repositories",
+    githubUrl: "https://github.com/stackyr",
+    email: "ventures@stackyr.io",
+    ctaButtonText: "Initiate Dialogue",
+    copyrightText: "© 2026 STACKYR Ecosystem Inc. “Stacking Intelligence”. All Rights Reserved.",
+    privacyPolicyText: "Privacy Policy",
+    termsOfServiceText: "Terms of Service",
+    constellationList: [
+      { name: "WEBIND (Edge Compute)", tag: "Flagship", link: "webind" },
+      { name: "Kronix AI (Cognitive Swarms)", tag: "", link: "brands" },
+      { name: "Cybermesh (zk-Cryptography)", tag: "", link: "brands" },
+      { name: "Synapth (Vector Fabrics)", tag: "", link: "brands" },
+      { name: "NeuroGrid (Silicon Edge)", tag: "", link: "brands" }
+    ]
   }
 };
 

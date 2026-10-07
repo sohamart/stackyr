@@ -1,11 +1,31 @@
 import React from 'react';
 import {
   Terminal, Users, Sparkles, ArrowRight, Github, MessageSquare,
-  Cpu, Code2, Award, Zap, Globe, ShieldCheck, Flame, BookOpen, ExternalLink
+  Cpu, Code2, Award, Zap, Globe, ShieldCheck, Flame, BookOpen, ExternalLink, Clock
 } from 'lucide-react';
 import ReviewsSection from '../components/public/ReviewsSection';
+import { useToast } from '../context/ToastContext';
 
-export default function StackAddaPage({ onNavigate }) {
+export default function StackAddaPage({ onNavigate, communityData }) {
+  const { info } = useToast();
+  const badgeText = communityData?.badge || 'DEVELOPER & HACKER COLLECTIVE • 14,200+ SYSTEMS ARCHITECTS';
+  const mainTitle = communityData?.title || 'Stackyr Community:';
+  const accentTitle = communityData?.titleAccent || 'The Engineering Crucible.';
+  const mainDesc = communityData?.description || 'An open technical collective within the Stackyr ecosystem. Where systems architects, kernel hackers, and AI researchers gather to stress-test zero-trust enclaves, optimize edge WASM runtimes, and build sovereign computing architectures.';
+  const discordUrl = communityData?.discordLink || 'https://discord.gg/stackyr';
+  const discordBtnText = communityData?.discordButtonText || 'Enter Stackyr Community Discord';
+  const isDiscordComingSoon = Boolean(communityData?.discordComingSoon);
+  const discordComingSoonBadge = communityData?.discordComingSoonBadge || 'COMING SOON';
+  const githubUrl = communityData?.githubLink || 'https://github.com/stackyr';
+  const githubBtnText = communityData?.githubButtonText || 'Explore GitHub Repos';
+  const isGithubComingSoon = Boolean(communityData?.githubComingSoon);
+  const githubComingSoonBadge = communityData?.githubComingSoonBadge || 'COMING SOON';
+  const statsList = (communityData?.stats && communityData?.stats.length > 0) ? communityData.stats : [
+    { label: 'Active Engineers', value: '14,200+' },
+    { label: 'Micro-Grants Disbursed', value: '$250,000+' },
+    { label: 'Specialized Guilds', value: '18 Units' },
+    { label: 'Open-Source Repos', value: '94 Codebases' }
+  ];
   const pillars = [
     {
       icon: Code2,
@@ -72,7 +92,7 @@ export default function StackAddaPage({ onNavigate }) {
             }}
           >
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-orange)', boxShadow: '0 0 8px var(--accent-orange)' }} />
-            <span>DEVELOPER & HACKER COLLECTIVE • 14,200+ SYSTEMS ARCHITECTS</span>
+            <span>{badgeText}</span>
           </div>
 
           <h1
@@ -85,8 +105,8 @@ export default function StackAddaPage({ onNavigate }) {
               lineHeight: 1.15
             }}
           >
-            Stackyr Community: <br />
-            The <span className="text-gradient">Engineering Crucible.</span>
+            {mainTitle} <br />
+            The <span className="text-gradient">{accentTitle}</span>
           </h1>
 
           <p
@@ -99,48 +119,118 @@ export default function StackAddaPage({ onNavigate }) {
               margin: '0 auto 28px auto'
             }}
           >
-            An open technical collective within the Stackyr ecosystem. Where systems architects, kernel hackers, and AI researchers gather to stress-test zero-trust enclaves, optimize edge WASM runtimes, and build sovereign computing architectures.
+            {mainDesc}
           </p>
 
           {/* Action CTAs */}
           <div className="stack-adda-cta-group" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <a
-              href="https://discord.gg/stackyr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-              style={{
-                padding: '13px 26px',
-                fontSize: '0.94rem',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <MessageSquare size={17} />
-              <span>Enter Stackyr Community Discord</span>
-              <ExternalLink size={15} />
-            </a>
+            {isDiscordComingSoon ? (
+              <button
+                type="button"
+                onClick={() => info ? info('The Stackyr Community Discord collective is currently in genesis preparation. Launching soon!') : alert('Stackyr Discord is launching soon!')}
+                className="btn-primary"
+                style={{
+                  padding: '12px 24px',
+                  fontSize: '0.94rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  border: '1px solid rgba(255, 107, 0, 0.5)'
+                }}
+              >
+                <MessageSquare size={17} />
+                <span>{discordBtnText}</span>
+                <span
+                  style={{
+                    padding: '2px 8px',
+                    borderRadius: '9999px',
+                    fontSize: '0.64rem',
+                    fontFamily: 'var(--font-mono)',
+                    background: 'rgba(0, 0, 0, 0.45)',
+                    border: '1px solid rgba(255, 255, 255, 0.35)',
+                    color: '#FFFFFF',
+                    fontWeight: 800,
+                    letterSpacing: '0.06em'
+                  }}
+                >
+                  {discordComingSoonBadge}
+                </span>
+              </button>
+            ) : (
+              <a
+                href={discordUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+                style={{
+                  padding: '13px 26px',
+                  fontSize: '0.94rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <MessageSquare size={17} />
+                <span>{discordBtnText}</span>
+                <ExternalLink size={15} />
+              </a>
+            )}
 
-            <a
-              href="https://github.com/stackyr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-              style={{
-                padding: '13px 26px',
-                fontSize: '0.94rem',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <Github size={17} />
-              <span>Explore GitHub Repos</span>
-              <ArrowRight size={15} />
-            </a>
+            {isGithubComingSoon ? (
+              <button
+                type="button"
+                onClick={() => info ? info('Stackyr open-source repositories are undergoing confidential security audit. Launching soon!') : alert('Stackyr GitHub is launching soon!')}
+                className="btn-secondary"
+                style={{
+                  padding: '12px 24px',
+                  fontSize: '0.94rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  border: '1px solid rgba(255, 107, 0, 0.4)'
+                }}
+              >
+                <Github size={17} />
+                <span>{githubBtnText}</span>
+                <span
+                  style={{
+                    padding: '2px 8px',
+                    borderRadius: '9999px',
+                    fontSize: '0.64rem',
+                    fontFamily: 'var(--font-mono)',
+                    background: 'rgba(255, 107, 0, 0.2)',
+                    border: '1px solid var(--accent-orange)',
+                    color: 'var(--accent-orange)',
+                    fontWeight: 800,
+                    letterSpacing: '0.06em'
+                  }}
+                >
+                  {githubComingSoonBadge}
+                </span>
+              </button>
+            ) : (
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+                style={{
+                  padding: '13px 26px',
+                  fontSize: '0.94rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Github size={17} />
+                <span>{githubBtnText}</span>
+                <ArrowRight size={15} />
+              </a>
+            )}
           </div>
         </div>
 
@@ -160,12 +250,7 @@ export default function StackAddaPage({ onNavigate }) {
             boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.8)'
           }}
         >
-          {[
-            { label: 'Active Engineers', value: '14,200+' },
-            { label: 'Micro-Grants Disbursed', value: '$250,000+' },
-            { label: 'Specialized Guilds', value: '18 Units' },
-            { label: 'Open-Source Repos', value: '94 Codebases' }
-          ].map((item, idx) => (
+          {statsList.map((item, idx) => (
             <div key={idx} style={{ borderLeft: '1px solid rgba(255, 107, 0, 0.25)', paddingLeft: '14px' }}>
               <div style={{ fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)', fontWeight: 900, fontFamily: 'var(--font-mono)', color: '#FFFFFF' }}>
                 {item.value}

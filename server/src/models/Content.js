@@ -75,10 +75,100 @@ const contentSchema = new mongoose.Schema(
       iconLogoDark: { type: String, default: '/stackyr-icon-dark.png' },
       iconLogoLight: { type: String, default: '/stackyr-icon-light.png' },
       heroBgStyle: { type: String, default: 'mesh-particle' }
+    },
+    trustMarquee: {
+      badge: { type: String, default: 'TRUSTED BY GLOBAL ARCHITECTS & SYSTEM ENGINEERS' }
+    },
+    homeFeatured: {
+      badge: { type: String, default: 'FEATURED VENTURE SPOTLIGHT' },
+      title: { type: String, default: 'Pillars of' },
+      titleAccent: { type: String, default: 'Compounding Scale' },
+      viewAllText: { type: String, default: 'Explore All 8+ Stackyr Ventures & Stealth Pipeline' }
+    },
+    homeEthosBanner: {
+      badge: { type: String, default: 'WHY WE STACK INTELLIGENCE' },
+      title: { type: String, default: 'Intelligence compounds when' },
+      titleAccent: { type: String, default: 'layered synergistically.' },
+      paragraph: { type: String, default: 'Stackyr eliminates bureaucratic drag and venture silos. Every stacked entity feeds telemetry, cryptographic security, and computational edge into every other.' },
+      primaryBtnText: { type: String, default: 'Read Full Story & Vision' },
+      secondaryBtnText: { type: String, default: 'Initiate Dialogue' }
+    },
+    homeReviews: {
+      badge: { type: String, default: 'VERIFIED ARCHITECTURAL REVIEWS' },
+      title: { type: String, default: 'Validated by Systems Architects &' },
+      titleAccent: { type: String, default: 'Founders.' },
+      subtitle: { type: String, default: 'Real-world telemetry and verified architectural feedback across 14,000+ deployments.' },
+      ratingScore: { type: String, default: '4.98 / 5.0' },
+      ratingSubtext: { type: String, default: 'Across 14,000+ Global Nodes' }
+    },
+    homeContactCard: {
+      badge: { type: String, default: 'DIRECT PROTOCOL COLLABORATION' },
+      title: { type: String, default: 'Ready to Compound' },
+      titleAccent: { type: String, default: 'Intelligence?' },
+      description: { type: String, default: "Whether you're deploying bare-metal AI clusters, pitching a venture to the Stackyr ecosystem, or integrating Webind edge compute, our leadership collective is ready." },
+      primaryBtnText: { type: String, default: 'Open Contact Portal' },
+      copyBtnText: { type: String, default: 'Copy Sovereign Email' },
+      email: { type: String, default: 'ventures@stackyr.io' },
+      responseNotice: { type: String, default: 'Average cryptographic SLA handshake: < 4 hours' }
+    },
+    community: {
+      badge: { type: String, default: 'DEVELOPER & HACKER COLLECTIVE • 14,200+ SYSTEMS ARCHITECTS' },
+      title: { type: String, default: 'Stackyr Community:' },
+      titleAccent: { type: String, default: 'The Engineering Crucible.' },
+      description: { type: String, default: 'An open technical collective within the Stackyr ecosystem. Where systems architects, kernel hackers, and AI researchers gather to stress-test zero-trust enclaves, optimize edge WASM runtimes, and build sovereign computing architectures.' },
+      discordLink: { type: String, default: 'https://discord.gg/stackyr' },
+      discordButtonText: { type: String, default: 'Enter Stackyr Community Discord' },
+      discordComingSoon: { type: Boolean, default: false },
+      discordComingSoonBadge: { type: String, default: 'COMING SOON' },
+      githubLink: { type: String, default: 'https://github.com/stackyr' },
+      githubButtonText: { type: String, default: 'Explore GitHub Repos' },
+      githubComingSoon: { type: Boolean, default: false },
+      githubComingSoonBadge: { type: String, default: 'COMING SOON' },
+      stats: [
+        { label: { type: String }, value: { type: String } }
+      ],
+      pillars: [
+        { title: { type: String }, desc: { type: String }, badge: { type: String } }
+      ],
+      workingGroups: [
+        { name: { type: String }, lead: { type: String }, count: { type: String }, status: { type: String } }
+      ]
+    },
+    footer: {
+      brandName: { type: String, default: 'STACKYR' },
+      brandTagline: { type: String, default: 'STACKING INTELLIGENCE' },
+      description: { type: String, default: 'The unified compound architecture orchestrating breakthrough AI ventures, high-velocity edge networks like WEBIND, and sovereign computing fabrics.' },
+      statusText: { type: String, default: 'GLOBAL MESH OPERATIONAL • 99.999%' },
+      col2Title: { type: String, default: 'ARCHITECTURE NAV' },
+      col3Title: { type: String, default: 'VENTURE CONSTELLATION' },
+      col4Title: { type: String, default: 'CONNECT & BUILD' },
+      col4Description: { type: String, default: 'Join the engineering collective, submit venture pitches, or access bare-metal testnets.' },
+      discordText: { type: String, default: 'Discord Collective' },
+      discordUrl: { type: String, default: 'https://discord.gg/stackyr' },
+      githubText: { type: String, default: 'GitHub Repositories' },
+      githubUrl: { type: String, default: 'https://github.com/stackyr' },
+      email: { type: String, default: 'ventures@stackyr.io' },
+      ctaButtonText: { type: String, default: 'Initiate Dialogue' },
+      copyrightText: { type: String, default: '© 2026 STACKYR Ecosystem Inc. “Stacking Intelligence”. All Rights Reserved.' },
+      privacyPolicyText: { type: String, default: 'Privacy Policy' },
+      termsOfServiceText: { type: String, default: 'Terms of Service' },
+      constellationList: {
+        type: [
+          { name: { type: String }, tag: { type: String }, link: { type: String } }
+        ],
+        default: () => [
+          { name: 'WEBIND (Edge Compute)', tag: 'Flagship', link: 'webind' },
+          { name: 'Kronix AI (Cognitive Swarms)', tag: '', link: 'brands' },
+          { name: 'Cybermesh (zk-Cryptography)', tag: '', link: 'brands' },
+          { name: 'Synapth (Vector Fabrics)', tag: '', link: 'brands' },
+          { name: 'NeuroGrid (Silicon Edge)', tag: '', link: 'brands' }
+        ]
+      }
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    strict: false
   }
 );
 

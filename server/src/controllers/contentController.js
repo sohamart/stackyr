@@ -38,18 +38,19 @@ export async function updateContent(req, res) {
     if (isFallbackActive()) {
       ensureMemoryContent();
       const db = getFallbackDb();
-      db.content = {
-        ...db.content,
-        ...updateData,
-        hero: { ...(db.content.hero || {}), ...(updateData.hero || {}) },
-        webind: { ...(db.content.webind || {}), ...(updateData.webind || {}) },
-        story: { ...(db.content.story || {}), ...(updateData.story || {}) },
-        capabilities: { ...(db.content.capabilities || {}), ...(updateData.capabilities || {}) },
-        cta: { ...(db.content.cta || {}), ...(updateData.cta || {}) },
-        sectionsConfig: { ...(db.content.sectionsConfig || {}), ...(updateData.sectionsConfig || {}) },
-        visualAssets: { ...(db.content.visualAssets || {}), ...(updateData.visualAssets || {}) },
-        updatedAt: new Date().toISOString()
-      };
+      const current = db.content || { ...initialSiteContent };
+
+      // Deeply merge all incoming sections
+      const merged = { ...current };
+      for (const [key, val] of Object.entries(updateData)) {
+        if (val && typeof val === 'object' && !Array.isArray(val)) {
+          merged[key] = { ...(current[key] || {}), ...val };
+        } else {
+          merged[key] = val;
+        }
+      }
+      merged.updatedAt = new Date().toISOString();
+      db.content = merged;
       saveFallbackDb();
       return res.json({ success: true, message: 'Site content updated successfully', data: db.content });
     }
@@ -58,7 +59,23 @@ export async function updateContent(req, res) {
     if (!content) {
       content = await SiteContent.create({ ...initialSiteContent, ...updateData });
     } else {
-      Object.assign(content, updateData);
+      for (const [key, val] of Object.entries(updateData)) {
+        if (val && typeof val === 'object' && !Array.isArray(val)) {
+          content[key] = { ...(content[key] || {}), ...val };
+        } else {
+          content[key] = val;
+        }
+      }
+      content.markModified?.('hero');
+      content.markModified?.('capabilities');
+      content.markModified?.('homeFeatured');
+      content.markModified?.('homeEthosBanner');
+      content.markModified?.('homeReviews');
+      content.markModified?.('homeContactCard');
+      content.markModified?.('trustMarquee');
+      content.markModified?.('sectionsConfig');
+      content.markModified?.('community');
+      content.markModified?.('footer');
       await content.save();
     }
 

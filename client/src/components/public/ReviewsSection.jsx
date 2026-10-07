@@ -1,7 +1,7 @@
 import React from 'react';
 import { Star, CheckCircle2, Sparkles } from 'lucide-react';
 
-export default function ReviewsSection() {
+export default function ReviewsSection({ reviewsData }) {
   const reviewsRow1 = [
     {
       id: 1,
@@ -289,7 +289,7 @@ export default function ReviewsSection() {
       <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center', marginBottom: '28px', padding: '0 16px' }}>
         <div className="badge-pill" style={{ margin: '0 auto 12px auto', display: 'inline-flex', padding: '4px 12px', fontSize: '0.68rem' }}>
           <Sparkles size={11} />
-          <span>ENTERPRISE & DEVELOPER FEEDBACK</span>
+          <span>{reviewsData?.badge || 'ENTERPRISE & DEVELOPER FEEDBACK'}</span>
         </div>
 
         <h2
@@ -302,7 +302,7 @@ export default function ReviewsSection() {
             lineHeight: 1.2
           }}
         >
-          Validated by Systems Architects & <span className="text-gradient">Founders.</span>
+          {reviewsData?.title || 'Validated by Systems Architects &'} <span className="text-gradient">{reviewsData?.titleAccent || 'Founders.'}</span>
         </h2>
 
         <p
@@ -314,7 +314,7 @@ export default function ReviewsSection() {
             lineHeight: 1.5
           }}
         >
-          Real-world telemetry and verified architectural feedback across 14,000+ deployments.
+          {reviewsData?.subtitle || 'Real-world telemetry and verified architectural feedback across 14,000+ deployments.'}
         </p>
 
         {/* Compact Star Rating Overview Pill */}
@@ -337,10 +337,10 @@ export default function ReviewsSection() {
             ))}
           </div>
           <span style={{ fontSize: '0.76rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#FFFFFF' }}>
-            4.98 / 5.0
+            {reviewsData?.ratingScore || '4.98 / 5.0'}
           </span>
           <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>
-            Across 14,000+ Global Nodes
+            {reviewsData?.ratingSubtext || 'Across 14,000+ Global Nodes'}
           </span>
         </div>
       </div>
@@ -406,12 +406,9 @@ export default function ReviewsSection() {
         .reviews-marquee-right {
           display: flex;
           width: max-content;
-          will-change: transform;
           transform: translate3d(0, 0, 0);
           -webkit-transform: translate3d(0, 0, 0);
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-          perspective: 1000px;
+          will-change: transform;
           contain: layout paint;
         }
 

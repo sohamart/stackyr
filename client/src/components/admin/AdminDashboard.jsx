@@ -62,14 +62,24 @@ export default function AdminDashboard({ brands = [], onNavigate, onOpenCreate }
           </p>
         </div>
 
-        <button
-          onClick={onOpenCreate}
-          className="btn-primary"
-          style={{ gap: '8px' }}
-        >
-          <Plus size={16} />
-          <span>Stack New Venture</span>
-        </button>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => onNavigate && onNavigate('content')}
+            className="btn-secondary"
+            style={{ gap: '8px', padding: '10px 18px', fontSize: '0.86rem' }}
+          >
+            <FileText size={16} color="var(--accent-orange)" />
+            <span>Edit Site Copy & CMS</span>
+          </button>
+          <button
+            onClick={onOpenCreate}
+            className="btn-primary"
+            style={{ gap: '8px', padding: '10px 20px', fontSize: '0.86rem' }}
+          >
+            <Plus size={16} />
+            <span>Stack New Venture</span>
+          </button>
+        </div>
       </div>
 
       {/* Metric Tiles */}

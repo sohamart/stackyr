@@ -13,6 +13,7 @@ import StackAddaPage from './pages/StackAddaPage';
 import AboutPage from './pages/AboutPage';
 import CapabilitiesPage from './pages/CapabilitiesPage';
 import ContactPage from './pages/ContactPage';
+import LegalModal from './components/common/LegalModal';
 import defaultData from './data/defaultData.json';
 
 import { fetchBrands, fetchContent } from './services/api';
@@ -45,6 +46,12 @@ export default function App() {
 
   const [currentPage, setCurrentPage] = useState(getPageFromHash);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [legalModal, setLegalModal] = useState(() => {
+    const h = window.location.hash.replace('#', '').toLowerCase();
+    if (h.includes('privacy')) return 'privacy';
+    if (h.includes('terms')) return 'terms';
+    return null;
+  });
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
@@ -86,6 +93,9 @@ export default function App() {
       if (page === 'admin' && !isAuthenticated) {
         setShowLoginModal(true);
       }
+      const h = window.location.hash.replace('#', '').toLowerCase();
+      if (h.includes('privacy')) setLegalModal('privacy');
+      else if (h.includes('terms')) setLegalModal('terms');
     };
 
     if (getPageFromHash() === 'admin' && !isAuthenticated) {
@@ -96,17 +106,17 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, [isAuthenticated]);
 
-  // Initialize Calibrated Time-Based Smooth Lenis Engine (Decoupled from native refresh rate)
+  // Initialize High-Performance Butter-Smooth Lenis Engine (Zero drag, 60/120fps native feel)
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2, // Continuous smooth floating glide duration in seconds
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Gold-standard exponential ease-out
-      wheelMultiplier: 0.85, // Strictly controls scroll travel per wheel tick: deliberate, measured, zero runaway
-      touchMultiplier: 1.2,
+      lerp: 0.09, // Ultra-responsive instantaneous linear interpolation (zero sticky lag)
+      wheelMultiplier: 1.0, // 1:1 natural wheel travel per notch (eliminates dragging/resistance)
+      touchMultiplier: 1.0,
       smoothWheel: true,
       syncTouch: false, // Ensures zero touch hijacking on mobile (pure 120Hz native hardware momentum)
       infinite: false,
-      autoRaf: true // Automatically manages high-precision performance.now() delta-time loop, fully independent of screen refresh rates
+      autoRaf: true, // Automatically manages high-precision performance.now() delta-time loop
+      autoResize: true
     });
 
     window.__lenis = lenis;
@@ -355,6 +365,7 @@ export default function App() {
 
         {(currentPage === 'community' || currentPage === 'stackadda') && (
           <StackAddaPage
+            communityData={content?.community}
             onNavigate={handleNavigate}
           />
         )}
@@ -383,8 +394,10 @@ export default function App() {
 
       {/* Public Footer */}
       <Footer
+        footerData={content?.footer}
         onNavigate={handleNavigate}
         onOpenAdmin={handleOpenAdmin}
+        onOpenLegal={(type) => setLegalModal(type)}
       />
 
       {/* Mobile App Dock with Liquid Water Droplet Animation */}
@@ -393,6 +406,14 @@ export default function App() {
         onNavigate={handleNavigate}
         brandCount={brands.length || 8}
       />
+
+      {/* Strict Legal Governance Modal (Privacy Policy & Terms of Service) */}
+      {legalModal && (
+        <LegalModal
+          initialTab={legalModal}
+          onClose={() => setLegalModal(null)}
+        />
+      )}
 
       {/* Brand Detailed Modal / Mobile Bottom Sheet */}
       {selectedBrand && (

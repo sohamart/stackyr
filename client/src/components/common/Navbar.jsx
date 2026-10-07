@@ -475,55 +475,6 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
             <ChevronRight size={13} color="var(--accent-orange)" />
           </button>
 
-          {/* PC / Desktop Admin Login Button */}
-          <button
-            type="button"
-            onClick={onOpenAdmin}
-            className="desktop-nav"
-            title={isAuthenticated ? 'Open Sovereign Admin Console' : 'Administrator Portal Login'}
-            style={{
-              display: 'none',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '7px 14px',
-              borderRadius: '9999px',
-              fontSize: '0.78rem',
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 700,
-              background: isAuthenticated
-                ? 'rgba(34, 197, 94, 0.12)'
-                : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${isAuthenticated ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.14)'}`,
-              color: isAuthenticated ? '#4ADE80' : '#E2E8F0',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--accent-orange)';
-              e.currentTarget.style.color = '#FFFFFF';
-              e.currentTarget.style.background = 'rgba(255, 107, 0, 0.18)';
-              e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 107, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = isAuthenticated ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.14)';
-              e.currentTarget.style.color = isAuthenticated ? '#4ADE80' : '#E2E8F0';
-              e.currentTarget.style.background = isAuthenticated ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.05)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            {isAuthenticated ? (
-              <>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 6px #22C55E' }} />
-                <span>Console Active</span>
-              </>
-            ) : (
-              <>
-                <Lock size={12} color="var(--accent-orange)" />
-                <span>Admin Login</span>
-              </>
-            )}
-          </button>
 
           {/* Mobile Menu Toggle Button */}
           <button
@@ -532,47 +483,73 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
               display: 'none',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 12px',
-              color: '#FFFFFF',
+              padding: '6px 14px',
+              color: mobileMenuOpen ? '#000000' : '#FFFFFF',
               borderRadius: '9999px',
-              background: mobileMenuOpen ? 'rgba(255, 107, 0, 0.2)' : 'rgba(255, 255, 255, 0.06)',
-              border: `1px solid ${mobileMenuOpen ? 'var(--accent-orange)' : 'rgba(255, 255, 255, 0.12)'}`,
+              background: mobileMenuOpen ? 'var(--accent-orange)' : 'rgba(255, 255, 255, 0.08)',
+              border: `1.5px solid ${mobileMenuOpen ? '#FFA050' : 'rgba(255, 255, 255, 0.15)'}`,
+              boxShadow: mobileMenuOpen ? '0 0 16px rgba(255, 107, 0, 0.55)' : 'none',
               cursor: 'pointer',
               fontSize: '0.8rem',
               fontFamily: 'var(--font-heading)',
-              fontWeight: 600,
+              fontWeight: 700,
               transition: 'all 0.2s ease'
             }}
             className="mobile-toggle"
             aria-label="Toggle navigation"
           >
-            {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
+            {mobileMenuOpen ? <X size={16} strokeWidth={2.8} /> : <Menu size={16} />}
             <span>{mobileMenuOpen ? 'Close' : 'Menu'}</span>
           </button>
         </div>
 
+        {/* Full-Screen Dark Dimming Backdrop */}
+        {mobileMenuOpen && (
+          <div
+            onClick={() => setMobileMenuOpen(false)}
+            data-lenis-prevent="true"
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(3, 4, 7, 0.88)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              zIndex: 90,
+              cursor: 'pointer',
+              animation: 'fadeIn 0.2s ease-out'
+            }}
+          />
+        )}
+
         {/* Modern Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div
+            data-lenis-prevent="true"
             style={{
               position: 'absolute',
-              top: 'calc(100% + 10px)',
+              top: 'calc(100% + 12px)',
               left: 0,
               right: 0,
-              background: 'rgba(10, 12, 18, 0.95)',
-              backdropFilter: 'blur(36px) saturate(220%)',
-              WebkitBackdropFilter: 'blur(36px) saturate(220%)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              background: '#0B0D15',
+              border: '1px solid rgba(255, 255, 255, 0.14)',
               borderRadius: '24px',
               padding: '18px',
               display: 'flex',
               flexDirection: 'column',
               gap: '8px',
-              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 107, 0, 0.18)',
+              boxShadow: '0 30px 80px rgba(0, 0, 0, 0.98), 0 0 45px rgba(255, 107, 0, 0.2)',
               animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-              zIndex: 100
+              zIndex: 100,
+              maxHeight: 'calc(85vh - 80px)',
+              overflowY: 'auto'
             }}
           >
+            {/* Drawer Top Header with Explicit Close Button */}
             <div
               style={{
                 display: 'flex',
@@ -580,15 +557,44 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
                 justifyContent: 'space-between',
                 paddingBottom: '12px',
                 marginBottom: '4px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.06)'
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
               }}
             >
-              <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-                STACKYR CONSTELLATION DIRECTORY
-              </span>
-              <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: '#22C55E' }}>
-                ● {brandCount} VENTURES LIVE
-              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+                  STACKYR DIRECTORY
+                </span>
+                <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: '#22C55E' }}>
+                  ● {brandCount} VENTURES LIVE
+                </span>
+              </div>
+
+              {/* Close Button Inside Drawer Top */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  background: 'rgba(255, 107, 0, 0.18)',
+                  border: '1.5px solid var(--accent-orange)',
+                  color: '#FFFFFF',
+                  cursor: 'pointer',
+                  fontSize: '0.74rem',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  boxShadow: '0 0 14px rgba(255, 107, 0, 0.35)',
+                  transition: 'all 0.18s ease'
+                }}
+              >
+                <X size={14} color="var(--accent-orange)" strokeWidth={2.8} />
+                <span>CLOSE</span>
+              </button>
             </div>
 
             {navLinks.map((link) => {
@@ -604,8 +610,10 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
                     justifyContent: 'space-between',
                     padding: '12px 16px',
                     borderRadius: '14px',
-                    background: isActive ? 'rgba(255, 107, 0, 0.16)' : 'rgba(255, 255, 255, 0.03)',
-                    border: `1px solid ${isActive ? 'rgba(255, 107, 0, 0.35)' : 'rgba(255, 255, 255, 0.05)'}`,
+                    background: isActive
+                      ? 'linear-gradient(90deg, rgba(255, 107, 0, 0.28) 0%, rgba(255, 107, 0, 0.12) 100%)'
+                      : '#121522',
+                    border: `1px solid ${isActive ? 'rgba(255, 107, 0, 0.45)' : 'rgba(255, 255, 255, 0.08)'}`,
                     color: isActive ? '#FFFFFF' : '#CBD5E1',
                     cursor: 'pointer',
                     textAlign: 'left',
@@ -653,36 +661,33 @@ export default function Navbar({ currentView = 'home', onNavigate, onOpenAdmin, 
               );
             })}
 
-            {/* Quick Admin Access inside Mobile Drawer */}
-            <div style={{ paddingTop: '10px', marginTop: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAdmin && onOpenAdmin();
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '10px 14px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 107, 0, 0.08)',
-                  border: '1px dashed rgba(255, 107, 0, 0.35)',
-                  color: 'var(--accent-orange)',
-                  fontSize: '0.82rem',
-                  fontFamily: 'var(--font-heading)',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Terminal size={15} />
-                  <span>Admin Console Login</span>
-                </div>
-                <ChevronRight size={15} />
-              </button>
-            </div>
+            {/* Bottom Easy-Close Action for Quick Thumb Reach */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu drawer"
+              style={{
+                marginTop: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '12px 16px',
+                borderRadius: '14px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px dashed rgba(255, 107, 0, 0.35)',
+                color: '#FFA050',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 700,
+                letterSpacing: '0.02em',
+                transition: 'all 0.18s ease'
+              }}
+            >
+              <X size={15} strokeWidth={2.5} />
+              <span>Close Menu</span>
+            </button>
           </div>
         )}
       </div>

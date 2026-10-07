@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function TrustMarquee() {
+export default function TrustMarquee({ marqueeData }) {
   const partners = [
     {
       name: 'NVIDIA',
@@ -122,6 +122,7 @@ export default function TrustMarquee() {
         position: 'relative',
         width: '100%',
         overflow: 'hidden',
+        contain: 'paint',
         padding: '30px 0',
         background: 'linear-gradient(180deg, rgba(6, 6, 8, 0.98) 0%, rgba(9, 11, 16, 0.6) 50%, rgba(6, 6, 8, 0.98) 100%)',
         borderTop: '1px solid rgba(255, 255, 255, 0.06)',
@@ -144,7 +145,7 @@ export default function TrustMarquee() {
         }}
       >
         <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.35)' }} />
-        <span>TRUSTED BY INDUSTRY LEADERS & ECOSYSTEM PARTNERS</span>
+        <span>{marqueeData?.badge || 'TRUSTED BY INDUSTRY LEADERS & ECOSYSTEM PARTNERS'}</span>
         <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.35)' }} />
       </div>
 
@@ -158,7 +159,8 @@ export default function TrustMarquee() {
           width: 'clamp(70px, 15vw, 200px)',
           background: 'linear-gradient(90deg, #060608 0%, rgba(6, 6, 8, 0.9) 35%, rgba(6, 6, 8, 0) 100%)',
           zIndex: 10,
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          contain: 'paint'
         }}
       />
 
@@ -172,11 +174,12 @@ export default function TrustMarquee() {
           width: 'clamp(70px, 15vw, 200px)',
           background: 'linear-gradient(270deg, #060608 0%, rgba(6, 6, 8, 0.9) 35%, rgba(6, 6, 8, 0) 100%)',
           zIndex: 10,
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          contain: 'paint'
         }}
       />
 
-      {/* Infinite Scrolling Track - Hardware 3D Composited */}
+      {/* Infinite Scrolling Track - Clean Hardware Composited */}
       <div className="marquee-track">
         {duplicatedList.map((partner, index) => (
           <div
@@ -193,8 +196,6 @@ export default function TrustMarquee() {
               border: '1px solid rgba(255, 255, 255, 0.08)',
               flexShrink: 0,
               cursor: 'default',
-              transform: 'translateZ(0)',
-              backfaceVisibility: 'hidden',
               transition: 'border-color 0.2s ease, background 0.2s ease'
             }}
           >

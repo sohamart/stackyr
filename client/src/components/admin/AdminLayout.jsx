@@ -352,7 +352,7 @@ export default function AdminLayout({
         </header>
 
         {/* Content View */}
-        <div style={{ padding: 'clamp(14px, 3.5vw, 36px)', flex: 1, maxWidth: '1400px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+        <div style={{ padding: 'clamp(14px, 3.5vw, 36px)', paddingBottom: 'clamp(90px, 14vw, 120px)', flex: 1, maxWidth: '1400px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
           {currentTab === 'dashboard' && (
             <AdminDashboard
               brands={brands}
@@ -390,6 +390,110 @@ export default function AdminLayout({
         </div>
       </main>
 
+      {/* Mobile Floating Bottom Dock (Screen <= 900px) */}
+      <nav
+        className="admin-mobile-dock"
+        aria-label="Admin Mobile Navigation"
+        style={{
+          display: 'none',
+          position: 'fixed',
+          bottom: '12px',
+          left: '12px',
+          right: '12px',
+          height: '62px',
+          background: 'rgba(10, 12, 18, 0.88)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 107, 0, 0.35)',
+          borderRadius: '9999px',
+          zIndex: 950,
+          boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 107, 0, 0.25)',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          padding: '0 8px'
+        }}
+      >
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = currentTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => {
+                setCurrentTab(item.id);
+                setSidebarOpen(false);
+              }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                background: active ? 'rgba(255, 107, 0, 0.16)' : 'transparent',
+                border: 'none',
+                borderRadius: '16px',
+                padding: '6px 10px',
+                cursor: 'pointer',
+                color: active ? '#FFFFFF' : 'var(--text-muted)',
+                position: 'relative',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+              }}
+              title={item.label}
+            >
+              <Icon size={18} color={active ? 'var(--accent-orange)' : 'var(--text-muted)'} />
+              <span
+                style={{
+                  fontSize: '0.62rem',
+                  fontWeight: active ? 700 : 500,
+                  fontFamily: 'var(--font-heading)',
+                  letterSpacing: '-0.01em',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {item.id === 'dashboard' ? 'Overview' : item.id === 'brands' ? 'Ventures' : item.id === 'content' ? 'CMS' : item.id === 'assets' ? 'Assets' : 'Inquiry'}
+              </span>
+              {item.badge !== undefined && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '6px',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: 'var(--accent-orange)',
+                    boxShadow: '0 0 6px var(--accent-orange)'
+                  }}
+                />
+              )}
+            </button>
+          );
+        })}
+
+        {/* Quick Add Venture FAB in Dock */}
+        <button
+          onClick={handleOpenCreate}
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #FF6B00 0%, #FF8A00 100%)',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#000000',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(255, 107, 0, 0.45)',
+            flexShrink: 0
+          }}
+          title="Stack New Venture"
+          aria-label="Stack New Venture"
+        >
+          <PlusCircle size={20} color="#000000" />
+        </button>
+      </nav>
+
       {/* 6-Step Multi-Step Brand Builder Modal */}
       {isModalOpen && (
         <BrandFormModal
@@ -412,6 +516,12 @@ export default function AdminLayout({
           }
           aside.sidebar-open {
             transform: translateX(0);
+          }
+          .admin-mobile-dock {
+            display: flex !important;
+          }
+          .admin-mobile-save-bar {
+            bottom: 84px !important;
           }
         }
       `}</style>

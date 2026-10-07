@@ -59,6 +59,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: auto !important;
+  overflow-x: clip;
 }
 
 /* Lenis Smooth Scroll Core Rules */
@@ -75,7 +76,7 @@ html.lenis, html.lenis body {
 }
 
 .lenis.lenis-stopped {
-  overflow: hidden;
+  overflow: clip;
 }
 
 body {
@@ -84,7 +85,7 @@ body {
   font-family: var(--font-body);
   line-height: 1.6;
   min-height: 100vh;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   max-width: 100vw !important;
   width: 100% !important;
   position: relative;
@@ -475,18 +476,20 @@ button {
   z-index: 1;
 }
 
-/* Horizon Spotlight Cone */
+/* Horizon Spotlight Cone - Hardware Accelerated Layer */
 .hero-spotlight {
   position: absolute;
   top: -160px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate3d(-50%, 0, 0);
+  -webkit-transform: translate3d(-50%, 0, 0);
   width: 1200px;
   height: 700px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(255, 107, 0, 0.28) 0%, rgba(245, 158, 11, 0.12) 35%, transparent 70%);
-  filter: blur(70px);
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 107, 0, 0.28) 0%, rgba(245, 158, 11, 0.12) 32%, rgba(255, 107, 0, 0.02) 58%, transparent 70%);
   pointer-events: none;
   z-index: 0;
+  contain: strict;
+  will-change: transform;
 }
 
 /* Ambient Radial Horizon line */
@@ -494,7 +497,8 @@ button {
   position: absolute;
   top: 48%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
+  -webkit-transform: translate3d(-50%, -50%, 0);
   width: 90%;
   max-width: 1100px;
   height: 1px;
@@ -502,6 +506,7 @@ button {
   box-shadow: 0 0 25px rgba(255, 107, 0, 0.7);
   pointer-events: none;
   z-index: 1;
+  contain: strict;
 }
 
 .animate-pulse-glow {
@@ -544,12 +549,9 @@ button {
   display: flex;
   width: max-content;
   animation: marqueeScroll 28s linear infinite;
-  will-change: transform;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  perspective: 1000px;
+  will-change: transform;
   contain: layout paint;
 }
 
@@ -557,12 +559,9 @@ button {
   display: flex;
   width: max-content;
   animation: marqueeScroll 34s linear infinite reverse;
-  will-change: transform;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  perspective: 1000px;
+  will-change: transform;
   contain: layout paint;
 }
 
@@ -695,6 +694,26 @@ button {
   .admin-hamburger-btn {
     display: inline-flex !important;
   }
+
+  /* Prevent iOS automatic zoom on form input focus */
+  .admin-main-container input,
+  .admin-main-container textarea,
+  .admin-main-container select {
+    font-size: 16px !important;
+  }
+
+  /* Safe area padding for mobile admin dock */
+  .admin-mobile-dock {
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  }
+}
+
+/* Touch feedback for admin interactive buttons */
+.admin-mobile-dock button:active,
+.admin-sidebar button:active,
+.btn-primary:active,
+.btn-secondary:active {
+  transform: scale(0.97);
 }
 
 /* ========================================================

@@ -201,8 +201,9 @@ export default function BrandManager({ brands = [], onRefresh, onOpenCreate, onO
         </div>
       </div>
 
-      {/* Ventures Table / List */}
+      {/* Ventures Desktop Table (Hidden on Mobile) */}
       <div
+        className="admin-desktop-brand-table"
         style={{
           borderRadius: '18px',
           background: 'rgba(12, 14, 20, 0.8)',
@@ -216,187 +217,349 @@ export default function BrandManager({ brands = [], onRefresh, onOpenCreate, onO
               style={{
                 display: 'grid',
                 gridTemplateColumns: '70px 1.8fr 1.2fr 100px 100px 140px',
-            padding: '14px 20px',
-            background: 'rgba(0, 0, 0, 0.4)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-            fontSize: '0.74rem',
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--text-muted)',
-            textTransform: 'uppercase'
-          }}
-        >
-          <div>Order</div>
-          <div>Venture Entity</div>
-          <div>Category</div>
-          <div>Featured</div>
-          <div>Stealth</div>
-          <div style={{ textAlign: 'right' }}>Actions</div>
-        </div>
+                padding: '14px 20px',
+                background: 'rgba(0, 0, 0, 0.4)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                fontSize: '0.74rem',
+                fontFamily: 'var(--font-mono)',
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase'
+              }}
+            >
+              <div>Order</div>
+              <div>Venture Entity</div>
+              <div>Category</div>
+              <div>Featured</div>
+              <div>Stealth</div>
+              <div style={{ textAlign: 'right' }}>Actions</div>
+            </div>
 
+            {filtered.length === 0 ? (
+              <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                No ventures found matching the search criteria.
+              </div>
+            ) : (
+              filtered.map((brand, idx) => (
+                <div
+                  key={brand._id || brand.id}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '70px 1.8fr 1.2fr 100px 100px 140px',
+                    alignItems: 'center',
+                    padding: '16px 20px',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                    transition: 'background 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.025)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  {/* Order buttons */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: 'var(--text-muted)', minWidth: '18px' }}>
+                      {idx + 1}
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <button
+                        onClick={() => moveUp(idx)}
+                        disabled={idx === 0}
+                        style={{ color: idx === 0 ? 'rgba(255, 255, 255, 0.1)' : 'var(--text-muted)', cursor: idx === 0 ? 'default' : 'pointer' }}
+                      >
+                        <ArrowUp size={12} />
+                      </button>
+                      <button
+                        onClick={() => moveDown(idx)}
+                        disabled={idx === filtered.length - 1}
+                        style={{ color: idx === filtered.length - 1 ? 'rgba(255, 255, 255, 0.1)' : 'var(--text-muted)', cursor: idx === filtered.length - 1 ? 'default' : 'pointer' }}
+                      >
+                        <ArrowDown size={12} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Brand Logo & Name */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div
+                      style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '8px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '6px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <img
+                        src={brand.logo || '/uploads/stackyr-icon-dark.png'}
+                        alt={brand.name}
+                        style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.94rem' }}>
+                        {brand.name}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: brand.accentColor || 'var(--accent-orange)' }}>
+                        {brand.tagline || 'Autonomous Venture node'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        padding: '4px 10px',
+                        borderRadius: '9999px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        color: 'var(--text-secondary)'
+                      }}
+                    >
+                      {brand.category}
+                    </span>
+                  </div>
+
+                  {/* Featured Toggle */}
+                  <div>
+                    <button
+                      onClick={() => handleToggleFeatured(brand)}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '9999px',
+                        fontSize: '0.72rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        background: brand.featured ? 'rgba(255, 107, 0, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                        border: `1px solid ${brand.featured ? 'var(--accent-orange)' : 'rgba(255, 255, 255, 0.1)'}`,
+                        color: brand.featured ? 'var(--accent-orange)' : 'var(--text-muted)'
+                      }}
+                    >
+                      {brand.featured ? 'FEATURED' : 'Standard'}
+                    </button>
+                  </div>
+
+                  {/* Stealth Toggle */}
+                  <div>
+                    <button
+                      onClick={() => handleToggleStealth(brand)}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '9999px',
+                        fontSize: '0.72rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        background: brand.isComingSoon ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                        border: `1px solid ${brand.isComingSoon ? '#F59E0B' : 'rgba(255, 255, 255, 0.1)'}`,
+                        color: brand.isComingSoon ? '#F59E0B' : 'var(--text-muted)'
+                      }}
+                    >
+                      {brand.isComingSoon ? 'STEALTH' : 'Public'}
+                    </button>
+                  </div>
+
+                  {/* Action Buttons: Edit, Delete */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                    <button
+                      onClick={() => onOpenEdit(brand)}
+                      style={{
+                        padding: '6px',
+                        borderRadius: '8px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: 'var(--text-secondary)',
+                        cursor: 'pointer'
+                      }}
+                      title="Edit venture parameters"
+                    >
+                      <Edit3 size={15} />
+                    </button>
+                    <button
+                      onClick={() => setBrandToDelete(brand)}
+                      style={{
+                        padding: '6px',
+                        borderRadius: '8px',
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        color: '#EF4444',
+                        cursor: 'pointer'
+                      }}
+                      title="Remove from ecosystem"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Ventures Mobile Card List (Visible only on Mobile screens < 768px) */}
+      <div className="admin-mobile-brand-cards" style={{ display: 'none', flexDirection: 'column', gap: '14px' }}>
         {filtered.length === 0 ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            No ventures found matching the search criteria.
+          <div style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)', background: 'rgba(12, 14, 20, 0.8)', borderRadius: '16px' }}>
+            No ventures found matching search.
           </div>
         ) : (
           filtered.map((brand, idx) => (
             <div
               key={brand._id || brand.id}
+              className="glass-card"
               style={{
-                display: 'grid',
-                gridTemplateColumns: '70px 1.8fr 1.2fr 100px 100px 140px',
-                alignItems: 'center',
-                padding: '16px 20px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                transition: 'background 0.2s ease'
+                padding: '16px',
+                borderRadius: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.08)'
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.025)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
-              {/* Order buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: 'var(--text-muted)', minWidth: '18px' }}>
-                  {idx + 1}
-                </span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <button
-                    onClick={() => moveUp(idx)}
-                    disabled={idx === 0}
-                    style={{ color: idx === 0 ? 'rgba(255, 255, 255, 0.1)' : 'var(--text-muted)', cursor: idx === 0 ? 'default' : 'pointer' }}
+              {/* Header: Logo, Name, Category */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                  <div
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '8px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '5px',
+                      flexShrink: 0
+                    }}
                   >
-                    <ArrowUp size={12} />
-                  </button>
-                  <button
-                    onClick={() => moveDown(idx)}
-                    disabled={idx === filtered.length - 1}
-                    style={{ color: idx === filtered.length - 1 ? 'rgba(255, 255, 255, 0.1)' : 'var(--text-muted)', cursor: idx === filtered.length - 1 ? 'default' : 'pointer' }}
-                  >
-                    <ArrowDown size={12} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Brand Logo & Name */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '6px',
-                    flexShrink: 0
-                  }}
-                >
-                  <img
-                    src={brand.logo || '/uploads/stackyr-icon-dark.png'}
-                    alt={brand.name}
-                    style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
-                  />
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.94rem' }}>
-                    {brand.name}
+                    <img
+                      src={brand.logo || '/uploads/stackyr-icon-dark.png'}
+                      alt={brand.name}
+                      style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                    />
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: brand.accentColor || 'var(--accent-orange)' }}>
-                    {brand.tagline || 'Autonomous Venture node'}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.94rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {brand.name}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: brand.accentColor || 'var(--accent-orange)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {brand.tagline || 'Autonomous Venture node'}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Category */}
-              <div>
-                <span
-                  style={{
-                    fontSize: '0.75rem',
-                    padding: '4px 10px',
-                    borderRadius: '9999px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    color: 'var(--text-secondary)'
-                  }}
-                >
-                  {brand.category}
+                <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: '6px', flexShrink: 0 }}>
+                  #{idx + 1}
                 </span>
               </div>
 
-              {/* Featured Toggle */}
-              <div>
+              {/* Toggles Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => handleToggleFeatured(brand)}
                   style={{
-                    padding: '4px 10px',
+                    padding: '6px 12px',
                     borderRadius: '9999px',
                     fontSize: '0.72rem',
                     fontFamily: 'var(--font-mono)',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: 'pointer',
-                    background: brand.featured ? 'rgba(255, 107, 0, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                    background: brand.featured ? 'rgba(255, 107, 0, 0.2)' : 'rgba(255, 255, 255, 0.04)',
                     border: `1px solid ${brand.featured ? 'var(--accent-orange)' : 'rgba(255, 255, 255, 0.1)'}`,
                     color: brand.featured ? 'var(--accent-orange)' : 'var(--text-muted)'
                   }}
                 >
-                  {brand.featured ? 'FEATURED' : 'Standard'}
+                  {brand.featured ? '★ FEATURED' : 'Standard'}
                 </button>
-              </div>
 
-              {/* Stealth Toggle */}
-              <div>
                 <button
                   onClick={() => handleToggleStealth(brand)}
                   style={{
-                    padding: '4px 10px',
+                    padding: '6px 12px',
                     borderRadius: '9999px',
                     fontSize: '0.72rem',
                     fontFamily: 'var(--font-mono)',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: 'pointer',
-                    background: brand.isComingSoon ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                    background: brand.isComingSoon ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.04)',
                     border: `1px solid ${brand.isComingSoon ? '#F59E0B' : 'rgba(255, 255, 255, 0.1)'}`,
                     color: brand.isComingSoon ? '#F59E0B' : 'var(--text-muted)'
                   }}
                 >
-                  {brand.isComingSoon ? 'STEALTH' : 'Public'}
+                  {brand.isComingSoon ? '🔒 STEALTH' : 'Public'}
                 </button>
+
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: 'auto' }}>
+                  {brand.category}
+                </span>
               </div>
 
-              {/* Action Buttons: Edit, Delete */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-                <button
-                  onClick={() => onOpenEdit(brand)}
-                  style={{
-                    padding: '6px',
-                    borderRadius: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    color: 'var(--text-secondary)',
-                    cursor: 'pointer'
-                  }}
-                  title="Edit venture parameters"
-                >
-                  <Edit3 size={15} />
-                </button>
-                <button
-                  onClick={() => setBrandToDelete(brand)}
-                  style={{
-                    padding: '6px',
-                    borderRadius: '8px',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    color: '#EF4444',
-                    cursor: 'pointer'
-                  }}
-                  title="Remove from ecosystem"
-                >
-                  <Trash2 size={15} />
-                </button>
+              {/* Actions Footer */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <button
+                    onClick={() => moveUp(idx)}
+                    disabled={idx === 0}
+                    className="btn-secondary"
+                    style={{ padding: '6px 10px', fontSize: '0.75rem', opacity: idx === 0 ? 0.3 : 1 }}
+                    title="Move Up"
+                  >
+                    <ArrowUp size={13} />
+                  </button>
+                  <button
+                    onClick={() => moveDown(idx)}
+                    disabled={idx === filtered.length - 1}
+                    className="btn-secondary"
+                    style={{ padding: '6px 10px', fontSize: '0.75rem', opacity: idx === filtered.length - 1 ? 0.3 : 1 }}
+                    title="Move Down"
+                  >
+                    <ArrowDown size={13} />
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    onClick={() => onOpenEdit(brand)}
+                    className="btn-secondary"
+                    style={{ padding: '6px 14px', fontSize: '0.78rem', gap: '6px' }}
+                  >
+                    <Edit3 size={13} />
+                    <span>Edit</span>
+                  </button>
+                  <button
+                    onClick={() => setBrandToDelete(brand)}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '8px',
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#EF4444',
+                      cursor: 'pointer'
+                    }}
+                    title="Delete"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
               </div>
             </div>
           ))
         )}
-          </div>
-        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-desktop-brand-table {
+            display: none !important;
+          }
+          .admin-mobile-brand-cards {
+            display: flex !important;
+          }
+        }
+      `}</style>
 
       {/* Delete Confirmation Modal */}
       {brandToDelete && (

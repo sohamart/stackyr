@@ -3,14 +3,20 @@ import { X, ExternalLink, ArrowRight, CheckCircle2, Shield, Layers, Globe, Twitt
 
 export default function BrandDetailModal({ brand, onClose }) {
   useEffect(() => {
+    if (window.__lenis) window.__lenis.stop();
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
+    const origBody = document.body.style.overflow;
+    const origHtml = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     return () => {
+      if (window.__lenis) window.__lenis.start();
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = origBody;
+      document.documentElement.style.overflow = origHtml;
     };
   }, [onClose]);
 
@@ -19,6 +25,9 @@ export default function BrandDetailModal({ brand, onClose }) {
 
   return (
     <div
+      data-lenis-prevent="true"
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
       style={{
         position: 'fixed',
         inset: 0,
@@ -37,6 +46,9 @@ export default function BrandDetailModal({ brand, onClose }) {
     >
       <div
         className="glass-card mobile-modal-sheet"
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
         style={{
           width: '100%',
           maxWidth: '740px',

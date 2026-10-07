@@ -19,11 +19,19 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
 
     let rafId = null;
     const handleMove = (e) => {
-      if (!torchRef.current) return;
+      if (!torchRef.current || !containerRef.current) return;
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
-        if (torchRef.current) {
-          torchRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+        if (torchRef.current && containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect();
+          if (e.clientY >= rect.top - 80 && e.clientY <= rect.bottom + 80) {
+            const relX = e.clientX - rect.left;
+            const relY = e.clientY - rect.top;
+            torchRef.current.style.opacity = '1';
+            torchRef.current.style.transform = `translate3d(${relX}px, ${relY}px, 0) translate(-50%, -50%)`;
+          } else {
+            torchRef.current.style.opacity = '0';
+          }
         }
         rafId = null;
       });
@@ -35,37 +43,51 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
     };
   }, []);
 
-  // Subtle synaptic dust canvas (Hardware accelerated, paused when scrolled out of view)
+  // Synaptic particle dust canvas (Original glowing electric embers)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext('2d');
     let animationFrameId = null;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+
+    const updateDimensions = () => {
+      const parent = containerRef.current;
+      const w = parent ? parent.offsetWidth : window.innerWidth;
+      const h = parent ? parent.offsetHeight : window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      return { w, h };
+    };
+
+    let { w: width, h: height } = updateDimensions();
     let isVisible = true;
 
-    // Pause rendering when hero is out of viewport to free 100% GPU/CPU during page scroll
-    const observer = new IntersectionObserver(([entry]) => {
-      isVisible = entry.isIntersecting;
-      if (isVisible && !animationFrameId) {
-        render();
-      }
-    }, { threshold: 0.05 });
+    // Pause rendering when hero is out of viewport to preserve 100% scroll performance
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !animationFrameId) {
+          render();
+        }
+      },
+      { threshold: 0.02 }
+    );
 
     if (containerRef.current) {
       observer.observe(containerRef.current);
     }
 
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      const dims = updateDimensions();
+      width = dims.w;
+      height = dims.h;
     };
     window.addEventListener('resize', handleResize, { passive: true });
 
     const particles = [];
-    const isMobile = window.innerWidth <= 768;
-    const count = isMobile ? 18 : 36;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    // Calibrated subtle count: 12 on mobile, 20 on desktop
+    const count = isMobile ? 12 : 20;
 
     for (let i = 0; i < count; i++) {
       particles.push({
@@ -73,8 +95,8 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
         y: Math.random() * height,
         vx: (Math.random() - 0.5) * 0.25,
         vy: (Math.random() - 0.5) * 0.25,
-        radius: Math.random() * 1.3 + 0.5,
-        alpha: Math.random() * 0.45 + 0.15
+        radius: Math.random() * 1.4 + 0.6,
+        alpha: Math.random() * 0.45 + 0.2
       });
     }
 
@@ -96,7 +118,8 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 107, 0, ${p.alpha})`;
-        // Zero software shadowBlur overhead for consistent 120fps
+        ctx.shadowColor = '#FF6B00';
+        ctx.shadowBlur = 6;
         ctx.fill();
       });
 
@@ -174,12 +197,12 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
       {/* 1. Cinematic Horizon Spotlight & Top Cone */}
       <div className="hero-spotlight" />
 
-      {/* 2. Interactive Cursor Torch Follower (Only for fine pointer desktop, disabled on mobile/touch) */}
+      {/* 2. Interactive Cursor Torch Follower (Scoped to hero, zero global composite overhead) */}
       <div
         ref={torchRef}
         className="desktop-cursor-torch"
         style={{
-          position: 'fixed',
+          position: 'absolute',
           top: 0,
           left: 0,
           width: '420px',
@@ -188,9 +211,9 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
           transform: 'translate3d(-999px, -999px, 0)',
           background: 'radial-gradient(circle, rgba(255, 107, 0, 0.08) 0%, rgba(245, 158, 11, 0.02) 45%, transparent 70%)',
           pointerEvents: 'none',
-          filter: 'blur(45px)',
           zIndex: 1,
-          willChange: 'transform'
+          opacity: 0,
+          transition: 'opacity 0.25s ease'
         }}
       />
 
@@ -203,6 +226,8 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
         style={{
           position: 'absolute',
           inset: 0,
+          width: '100%',
+          height: '100%',
           pointerEvents: 'none',
           zIndex: 2
         }}
@@ -368,8 +393,7 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
             overflow: 'hidden',
             boxSizing: 'border-box',
             touchAction: 'pan-y',
-            transform: 'translateZ(0)',
-            willChange: 'transform'
+            contain: 'layout paint'
           }}
           className="hero-video-chassis-wrapper"
         >
@@ -379,11 +403,9 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
             style={{
               position: 'absolute',
               inset: '-10px',
-              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 107, 0, 0.18) 0%, rgba(245, 158, 11, 0.04) 50%, transparent 75%)',
-              filter: 'blur(28px)',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 107, 0, 0.16) 0%, rgba(245, 158, 11, 0.05) 45%, rgba(255, 107, 0, 0.01) 60%, transparent 75%)',
               pointerEvents: 'none',
-              zIndex: 0,
-              transform: 'translateZ(0)'
+              zIndex: 0
             }}
           />
 
@@ -395,8 +417,7 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
               overflow: 'hidden',
               background: '#040508',
               boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.95), 0 12px 40px rgba(0, 0, 0, 0.7)',
-              zIndex: 1,
-              transform: 'translateZ(0)'
+              zIndex: 1
             }}
           >
             {/* Showcase Media Container (16:9 - Seamlessly plays Cloudinary, ImageKit, YouTube, Vimeo, or MP4) */}
@@ -415,9 +436,7 @@ export default function HeroSection({ heroData, onExploreClick, onNavigate }) {
                     height: '100%',
                     objectFit: 'cover',
                     display: 'block',
-                    pointerEvents: 'none',
-                    transform: 'translateZ(0)',
-                    willChange: 'transform'
+                    pointerEvents: 'none'
                   }}
                 >
                   <source src={media.url} type="video/mp4" />

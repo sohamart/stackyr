@@ -1,0 +1,73 @@
+{
+  "name": "Stackyr — Stacking Intelligence",
+  "short_name": "Stackyr",
+  "description": "Stackyr orchestrates a hyper-synergistic ecosystem of breakthrough AI ventures, high-velocity web infrastructure, and sovereign computing architectures.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#060608",
+  "theme_color": "#FF6B00",
+  "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "en-US",
+  "categories": [
+    "technology",
+    "business",
+    "productivity",
+    "developer tools"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/stackyr_favicon_transparent.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ecosystem Brands",
+      "short_name": "Brands",
+      "description": "Explore all Stackyr ventures and portfolio brands",
+      "url": "/#brands",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stackyr Community",
+      "short_name": "Community",
+      "description": "Join the Stackyr engineering and developer collective",
+      "url": "/#community",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "WEBIND Infrastructure",
+      "short_name": "WEBIND",
+      "description": "Autonomous cloud edge computing platform",
+      "url": "/#webind",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

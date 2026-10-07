@@ -216,12 +216,12 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
         {/* Modal Header & Multi-Step Progress Tracker */}
         <div
           style={{
-            padding: '24px 32px 18px 32px',
+            padding: 'clamp(14px, 3vw, 22px) clamp(14px, 3.5vw, 32px)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             background: 'rgba(0, 0, 0, 0.25)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div
                 style={{
@@ -232,16 +232,17 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                   border: '1px solid rgba(255, 107, 0, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  flexShrink: 0
                 }}
               >
                 <Layers size={18} color="var(--accent-orange)" />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
-                  {isEditing ? `Edit Venture: ${brand.name}` : 'Stack New Ecosystem Venture'}
+                <h3 style={{ fontSize: 'clamp(1.05rem, 2.5vw, 1.25rem)', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+                  {isEditing ? `Edit: ${brand.name}` : 'Stack New Ecosystem Venture'}
                 </h3>
-                <span style={{ fontSize: '0.74rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
                   STAGE 0{currentStep} OF 06 — {STEPS[currentStep - 1].label.toUpperCase()}
                 </span>
               </div>
@@ -258,15 +259,27 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                flexShrink: 0
               }}
             >
               <X size={16} />
             </button>
           </div>
 
-          {/* Step Indicator Bar */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          {/* Step Indicator Bar (Scrollable on small mobile) */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+              overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              paddingBottom: '4px'
+            }}
+          >
             {STEPS.map((s, idx) => {
               const isPast = currentStep > s.id;
               const isCurr = currentStep === s.id;
@@ -315,7 +328,7 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
         </div>
 
         {/* Modal Scrollable Body */}
-        <div style={{ padding: '32px', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: 'clamp(16px, 4vw, 32px)', overflowY: 'auto', flex: 1 }}>
           {/* STEP 01 — BRAND IDENTITY */}
           {currentStep === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -962,12 +975,14 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
         {/* Modal Footer Controls */}
         <div
           style={{
-            padding: '20px 32px',
+            padding: 'clamp(12px, 3vw, 18px) clamp(16px, 4vw, 32px)',
             borderTop: '1px solid rgba(255, 255, 255, 0.08)',
             background: 'rgba(0, 0, 0, 0.4)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            gap: '10px',
+            flexWrap: 'wrap'
           }}
         >
           {currentStep > 1 ? (

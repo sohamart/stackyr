@@ -1,66 +1,99 @@
 import React from 'react';
-import { Layers, ShieldCheck, ArrowUpRight, Cpu, Terminal, Sparkles, Lock } from 'lucide-react';
+import {
+  Layers, ArrowUpRight, Cpu, Terminal, Sparkles, Shield,
+  Github, MessageSquare, Twitter, Mail, CheckCircle2, Globe, ExternalLink
+} from 'lucide-react';
 
-export default function Footer({ onNavigate, onOpenAdmin }) {
+export default function Footer({ footerData, onNavigate, onOpenAdmin, onOpenLegal }) {
   const handleNav = (page) => {
     if (onNavigate) onNavigate(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const footer = {
+    brandName: footerData?.brandName || 'STACKYR',
+    brandTagline: footerData?.brandTagline || 'Stacking Intelligence',
+    description: footerData?.description || 'The unified compound architecture orchestrating breakthrough AI ventures, high-velocity edge networks like WEBIND, and sovereign computing fabrics.',
+    statusText: footerData?.statusText || 'GLOBAL MESH OPERATIONAL • 99.999%',
+    col2Title: footerData?.col2Title || 'Architecture Nav',
+    col3Title: footerData?.col3Title || 'Venture Constellation',
+    col4Title: footerData?.col4Title || 'Connect & Build',
+    col4Description: footerData?.col4Description || 'Join the engineering collective, submit venture pitches, or access bare-metal testnets.',
+    discordText: footerData?.discordText || 'Discord Collective',
+    discordUrl: footerData?.discordUrl || 'https://discord.gg/stackyr',
+    githubText: footerData?.githubText || 'GitHub Repositories',
+    githubUrl: footerData?.githubUrl || 'https://github.com/stackyr',
+    email: footerData?.email || 'ventures@stackyr.io',
+    ctaButtonText: footerData?.ctaButtonText || 'Initiate Dialogue',
+    copyrightText: footerData?.copyrightText || `© ${new Date().getFullYear()} STACKYR Ecosystem Inc. “Stacking Intelligence”. All Rights Reserved.`,
+    privacyPolicyText: footerData?.privacyPolicyText || 'Privacy Policy',
+    termsOfServiceText: footerData?.termsOfServiceText || 'Terms of Service',
+    constellationList: footerData?.constellationList && footerData.constellationList.length > 0
+      ? footerData.constellationList
+      : [
+          { name: 'WEBIND (Edge Compute)', tag: 'Flagship', link: 'webind' },
+          { name: 'Kronix AI (Cognitive Swarms)', tag: '', link: 'brands' },
+          { name: 'Cybermesh (zk-Cryptography)', tag: '', link: 'brands' },
+          { name: 'Synapth (Vector Fabrics)', tag: '', link: 'brands' },
+          { name: 'NeuroGrid (Silicon Edge)', tag: '', link: 'brands' }
+        ]
   };
 
   return (
     <footer
       style={{
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        background: 'linear-gradient(180deg, #060608 0%, #030304 100%)',
-        padding: '80px 0 40px 0',
+        background: 'linear-gradient(180deg, #060608 0%, #030305 100%)',
+        padding: 'clamp(50px, 8vw, 84px) 0 clamp(24px, 4vw, 40px) 0',
         position: 'relative',
         overflow: 'hidden'
       }}
     >
-      {/* Subtle bottom ambient glow */}
+      {/* Ambient bottom warm glow */}
       <div
         style={{
           position: 'absolute',
-          bottom: '-150px',
+          bottom: '-140px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '800px',
-          height: '300px',
-          background: 'radial-gradient(circle, rgba(255, 107, 0, 0.12) 0%, transparent 70%)',
+          width: 'min(900px, 94vw)',
+          height: '320px',
+          background: 'radial-gradient(circle, rgba(255, 107, 0, 0.12) 0%, rgba(245, 158, 11, 0.03) 50%, transparent 75%)',
           filter: 'blur(90px)',
           pointerEvents: 'none'
         }}
       />
 
       <div className="container">
+        {/* Main 4-Column Grid */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '48px',
-            marginBottom: '60px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 230px), 1fr))',
+            gap: 'clamp(32px, 5vw, 48px)',
+            marginBottom: 'clamp(36px, 6vw, 64px)'
           }}
         >
-          {/* Brand Column */}
-          <div style={{ maxWidth: '340px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          {/* Column 1: Brand & Operational Status */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <img
-                src="/stackyr-icon-dark.png"
-                alt="Stackyr"
-                style={{ height: '36px', width: 'auto' }}
+                src="/retouch_2026100722274326.png"
+                alt="Stackyr Symbol"
+                style={{ height: '36px', width: 'auto', filter: 'drop-shadow(0 0 12px rgba(255, 107, 0, 0.35))' }}
               />
               <div>
-                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', fontWeight: 800, color: '#FFFFFF' }}>
-                  STACKYR
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                  {footer.brandName}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--accent-orange)', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 600 }}>
-                  Stacking Intelligence
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--accent-orange)', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700 }}>
+                  {footer.brandTagline}
                 </div>
               </div>
             </div>
 
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
-              The unified compound architecture of breakthrough AI ventures, sovereign edge networks, developer communities, and bare-metal compute.
+            <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+              {footer.description}
             </p>
 
             {/* Operational Status Pill */}
@@ -73,9 +106,10 @@ export default function Footer({ onNavigate, onOpenAdmin }) {
                 borderRadius: '9999px',
                 background: 'rgba(34, 197, 94, 0.08)',
                 border: '1px solid rgba(34, 197, 94, 0.25)',
-                fontSize: '0.74rem',
+                fontSize: '0.72rem',
                 fontFamily: 'var(--font-mono)',
-                color: '#4ADE80'
+                color: '#4ADE80',
+                width: 'fit-content'
               }}
             >
               <span
@@ -87,74 +121,138 @@ export default function Footer({ onNavigate, onOpenAdmin }) {
                   boxShadow: '0 0 8px #22C55E'
                 }}
               />
-              ECOSYSTEM OPERATIONAL • 99.999%
+              <span>{footer.statusText}</span>
             </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Column 2: Ecosystem Navigation */}
           <div>
-            <h4 style={{ fontSize: '0.85rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '18px' }}>
-              Navigation
+            <h4
+              style={{
+                fontSize: '0.8rem',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--text-muted)',
+                marginBottom: '18px',
+                fontWeight: 700
+              }}
+            >
+              {footer.col2Title}
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.9rem' }}>
-              <button onClick={() => handleNav('home')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Home Page</button>
-              <button onClick={() => handleNav('brands')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Ventures & Brands</button>
-              <button onClick={() => handleNav('capabilities')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Deep-Tech Capabilities</button>
-              <button onClick={() => handleNav('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>About Us & Ethos</button>
-              <button onClick={() => handleNav('contact')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Contact & Partner</button>
-              <button
-                onClick={onOpenAdmin}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--accent-orange)',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  padding: 0,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontWeight: 600,
-                  transition: 'opacity 0.2s'
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-              >
-                <Lock size={13} />
-                <span>Admin Login</span>
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem' }}>
+              <button onClick={() => handleNav('home')} className="footer-nav-link">Home Ecosystem</button>
+              <button onClick={() => handleNav('brands')} className="footer-nav-link">Ventures & Brands</button>
+              <button onClick={() => handleNav('community')} className="footer-nav-link">Stackyr Community</button>
+              <button onClick={() => handleNav('capabilities')} className="footer-nav-link">Deep-Tech Capabilities</button>
+              <button onClick={() => handleNav('about')} className="footer-nav-link">About Us & Ethos</button>
+              <button onClick={() => handleNav('contact')} className="footer-nav-link">Contact & Partner</button>
             </div>
           </div>
 
-          {/* Brands Portfolio Column */}
+          {/* Column 3: Venture Entities */}
           <div>
-            <h4 style={{ fontSize: '0.85rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '18px' }}>
-              Venture Entities
+            <h4
+              style={{
+                fontSize: '0.8rem',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--text-muted)',
+                marginBottom: '18px',
+                fontWeight: 700
+              }}
+            >
+              {footer.col3Title}
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.9rem' }}>
-              <button onClick={() => handleNav('brands')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>WEBIND (Edge Compute)</button>
-              <button onClick={() => handleNav('community')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Stackyr Community (Dev Collective)</button>
-              <button onClick={() => handleNav('brands')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Kronix AI (Cognitive Swarms)</button>
-              <button onClick={() => handleNav('brands')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Cybermesh (zk-Cryptography)</button>
-              <button onClick={() => handleNav('brands')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Synapth (Vector Fabrics)</button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem' }}>
+              {footer.constellationList.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleNav(item.link || 'brands')}
+                  className="footer-nav-link"
+                >
+                  <span>{item.name}</span>
+                  {item.tag && <span className="footer-pill-tag">{item.tag}</span>}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Community & Dialogue */}
+          {/* Column 4: Engineering Channels & Dialogue */}
           <div>
-            <h4 style={{ fontSize: '0.85rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '18px' }}>
-              Connect & Build
+            <h4
+              style={{
+                fontSize: '0.8rem',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--text-muted)',
+                marginBottom: '18px',
+                fontWeight: 700
+              }}
+            >
+              {footer.col4Title}
             </h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '16px' }}>
-              Are you developing deep-tech AI models or looking to join the Stackyr venture pipeline?
+            <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '14px' }}>
+              {footer.col4Description}
             </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+              {footer.discordUrl && (
+                <a
+                  href={footer.discordUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-social-link"
+                >
+                  <MessageSquare size={14} color="#5865F2" />
+                  <span>{footer.discordText}</span>
+                  <ArrowUpRight size={12} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
+                </a>
+              )}
+
+              {footer.githubUrl && (
+                <a
+                  href={footer.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-social-link"
+                >
+                  <Github size={14} color="var(--accent-orange)" />
+                  <span>{footer.githubText}</span>
+                  <ArrowUpRight size={12} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
+                </a>
+              )}
+
+              {footer.email && (
+                <a
+                  href={`mailto:${footer.email}`}
+                  className="footer-social-link"
+                >
+                  <Mail size={14} color="#F59E0B" />
+                  <span>{footer.email}</span>
+                  <ArrowUpRight size={12} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
+                </a>
+              )}
+            </div>
+
             <button
               onClick={() => handleNav('contact')}
               className="btn-primary"
-              style={{ padding: '10px 20px', fontSize: '0.88rem', cursor: 'pointer' }}
+              style={{
+                padding: '9px 18px',
+                fontSize: '0.82rem',
+                borderRadius: '9999px',
+                width: '100%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
-              <span>Initiate Dialogue</span>
-              <ArrowUpRight size={15} />
+              <span>{footer.ctaButtonText}</span>
+              <ArrowUpRight size={14} />
             </button>
           </div>
         </div>
@@ -162,8 +260,8 @@ export default function Footer({ onNavigate, onOpenAdmin }) {
         {/* Bottom Bar */}
         <div
           style={{
-            paddingTop: '32px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+            paddingTop: '28px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -173,53 +271,154 @@ export default function Footer({ onNavigate, onOpenAdmin }) {
             color: 'var(--text-muted)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>© {new Date().getFullYear()} STACKYR Ecosystem Inc. “Stacking Intelligence”. All Rights Reserved.</span>
-            {/* Secret discreet Admin key */}
+          {/* Copyright & Trademark */}
+          <div>
+            <span>{footer.copyrightText}</span>
+          </div>
+
+          {/* Legal Links & PC-Only Admin Access */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            {/* Privacy Policy Trigger */}
             <button
-              onClick={onOpenAdmin}
-              title="System Node"
+              onClick={() => onOpenLegal && onOpenLegal('privacy')}
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'rgba(255, 255, 255, 0.15)',
+                color: 'var(--text-secondary)',
+                fontSize: '0.82rem',
                 cursor: 'pointer',
-                padding: '4px',
-                display: 'inline-flex',
-                alignItems: 'center',
+                padding: 0,
                 transition: 'color 0.2s'
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-orange)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.15)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
             >
-              <Terminal size={13} />
+              {footer.privacyPolicyText}
             </button>
-          </div>
 
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            {/* Terms of Service Trigger */}
             <button
-              onClick={onOpenAdmin}
+              onClick={() => onOpenLegal && onOpenLegal('terms')}
               style={{
                 background: 'none',
                 border: 'none',
+                color: 'var(--text-secondary)',
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                padding: 0,
+                transition: 'color 0.2s'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-orange)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            >
+              {footer.termsOfServiceText}
+            </button>
+
+            {/* PC-ONLY Admin Access Shortcut (Hidden on Mobile) */}
+            <button
+              onClick={onOpenAdmin}
+              className="pc-only-admin-shortcut"
+              title="System Operator Console (PC Shortcut: Ctrl+Shift+A)"
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '8px',
                 color: 'var(--text-muted)',
                 cursor: 'pointer',
-                display: 'inline-flex',
+                padding: '4px 10px',
+                fontSize: '0.76rem',
+                fontFamily: 'var(--font-mono)',
+                gap: '8px',
                 alignItems: 'center',
-                gap: '6px',
-                padding: 0,
-                fontSize: '0.8rem'
+                transition: 'all 0.2s ease'
               }}
-              title="Open Admin Console"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255, 107, 0, 0.4)';
+                e.currentTarget.style.color = '#FFFFFF';
+                e.currentTarget.style.background = 'rgba(255, 107, 0, 0.08)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.color = 'var(--text-muted)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+              }}
             >
-              <span>Admin Access:</span>
-              <kbd style={{ padding: '2px 6px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-orange)' }}>Ctrl+Shift+A</kbd>
+              <Terminal size={12} color="var(--accent-orange)" />
+              <span>Admin Console</span>
+              <kbd
+                style={{
+                  padding: '2px 5px',
+                  borderRadius: '4px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  fontSize: '0.68rem',
+                  color: 'var(--accent-orange)'
+                }}
+              >
+                Ctrl+Shift+A
+              </kbd>
             </button>
-            <a href="#" style={{ color: 'var(--text-secondary)' }}>Privacy Policy</a>
-            <a href="#" style={{ color: 'var(--text-secondary)' }}>Terms of Service</a>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .footer-nav-link {
+          background: none;
+          border: none;
+          color: var(--text-secondary);
+          text-align: left;
+          cursor: pointer;
+          padding: 0;
+          font-family: inherit;
+          font-size: 0.88rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: color 0.18s ease, transform 0.18s ease;
+        }
+        .footer-nav-link:hover {
+          color: #FFFFFF;
+          transform: translateX(3px);
+        }
+        .footer-pill-tag {
+          font-size: 0.64rem;
+          font-family: var(--font-mono);
+          padding: 1px 6px;
+          border-radius: 9999px;
+          background: rgba(255, 107, 0, 0.15);
+          color: var(--accent-orange);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          font-weight: 700;
+        }
+        .footer-social-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 10px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          color: var(--text-secondary);
+          font-size: 0.8rem;
+          text-decoration: none;
+          transition: all 0.18s ease;
+        }
+        .footer-social-link:hover {
+          background: rgba(255, 255, 255, 0.06);
+          color: #FFFFFF;
+          border-color: rgba(255, 255, 255, 0.12);
+        }
+        /* PC ONLY Admin Shortcut: Visible on desktop, completely hidden on mobile/tablet */
+        .pc-only-admin-shortcut {
+          display: inline-flex;
+        }
+        @media (max-width: 899px) {
+          .pc-only-admin-shortcut {
+            display: none !important;
+          }
+        }
+      `}</style>
     </footer>
   );
 }
