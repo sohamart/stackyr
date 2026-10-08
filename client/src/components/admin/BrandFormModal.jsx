@@ -38,6 +38,33 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
+  // Lock body & Lenis smooth scroll while modal is active so inner div scrolls smoothly
+  useEffect(() => {
+    if (window.__lenis) {
+      window.__lenis.stop();
+    }
+    const origBodyOverflow = document.body.style.overflow;
+    const origHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && onClose) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      if (window.__lenis) {
+        window.__lenis.start();
+      }
+      document.body.style.overflow = origBodyOverflow;
+      document.documentElement.style.overflow = origHtmlOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   // Form State
   const [formData, setFormData] = useState({
     name: brand?.name || '',
@@ -61,13 +88,13 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
       github: brand?.socialLinks?.github || '',
       discord: brand?.socialLinks?.discord || ''
     },
-    logo: brand?.logo || '/uploads/stackyr-icon-dark.png',
+    logo: brand?.logo || '/stackyr-icon-dark.png',
     coverImage: brand?.coverImage || ''
   });
 
   const [newServiceText, setNewServiceText] = useState('');
   const [logoFile, setLogoFile] = useState(null);
-  const [logoPreview, setLogoPreview] = useState(brand?.logo || '/uploads/stackyr-icon-dark.png');
+  const [logoPreview, setLogoPreview] = useState(brand?.logo || '/stackyr-icon-dark.png');
   const [dragOver, setDragOver] = useState(false);
 
   // Handle Logo Upload Preview
@@ -210,6 +237,9 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
 
   return (
     <div
+      data-lenis-prevent="true"
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
       style={{
         position: 'fixed',
         inset: 0,
@@ -224,9 +254,13 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
       onClick={onClose}
     >
       <div
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
         style={{
           width: '100%',
           maxWidth: '860px',
+          height: 'min(92vh, 880px)',
           maxHeight: '92vh',
           background: 'linear-gradient(180deg, #10121A 0%, #090A0E 100%)',
           border: '1px solid rgba(255, 107, 0, 0.35)',
@@ -244,7 +278,8 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
           style={{
             padding: 'clamp(14px, 3vw, 22px) clamp(14px, 3.5vw, 32px)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(0, 0, 0, 0.25)'
+            background: 'rgba(0, 0, 0, 0.25)',
+            flexShrink: 0
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -354,7 +389,20 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
         </div>
 
         {/* Modal Scrollable Body */}
-        <div style={{ padding: 'clamp(16px, 4vw, 32px)', overflowY: 'auto', flex: 1 }}>
+        <div
+          className="brand-form-scroll-container"
+          data-lenis-prevent="true"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          style={{
+            padding: 'clamp(16px, 4vw, 32px)',
+            overflowY: 'auto',
+            flex: '1 1 0px',
+            minHeight: 0,
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
           {/* STEP 01 — BRAND IDENTITY */}
           {currentStep === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -901,7 +949,7 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                     value={formData.logo && !formData.logo.startsWith('data:') ? formData.logo : ''}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setLogoPreview(val || '/uploads/stackyr-icon-dark.png');
+                      setLogoPreview(val || '/stackyr-icon-dark.png');
                       setFormData(prev => ({ ...prev, logo: val }));
                       setLogoFile(null);
                     }}
@@ -948,6 +996,10 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                       src={logoPreview}
                       alt="Brand preview"
                       style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/stackyr-icon-dark.png';
+                      }}
                     />
                   </div>
                 </div>
@@ -966,10 +1018,10 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                     {[
-                      { label: 'Dark Icon', path: '/uploads/stackyr-icon-dark.png' },
-                      { label: 'Light Icon', path: '/uploads/stackyr-icon-light.png' },
-                      { label: 'Dark Full', path: '/uploads/stackyr-full-dark.png' },
-                      { label: 'Light Full', path: '/uploads/stackyr-full-light.png' }
+                      { label: 'Dark Icon', path: '/stackyr-icon-dark.png' },
+                      { label: 'Light Icon', path: '/stackyr-icon-light.png' },
+                      { label: 'Dark Full', path: '/stackyr-full-dark.png' },
+                      { label: 'Light Full', path: '/stackyr-full-light.png' }
                     ].map((asset, idx) => (
                       <div
                         key={idx}
@@ -995,6 +1047,10 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                           src={asset.path}
                           alt={asset.label}
                           style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/stackyr-icon-dark.png';
+                          }}
                         />
                       </div>
                     ))}
@@ -1053,7 +1109,8 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '10px',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            flexShrink: 0
           }}
         >
           {currentStep > 1 ? (
@@ -1106,6 +1163,23 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
           )}
         </div>
       </div>
+
+      <style>{`
+        .brand-form-scroll-container::-webkit-scrollbar {
+          width: 8px;
+        }
+        .brand-form-scroll-container::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 9999px;
+        }
+        .brand-form-scroll-container::-webkit-scrollbar-thumb {
+          background: rgba(255, 107, 0, 0.55);
+          border-radius: 9999px;
+        }
+        .brand-form-scroll-container::-webkit-scrollbar-thumb:hover {
+          background: var(--accent-orange);
+        }
+      `}</style>
     </div>
   );
 }
