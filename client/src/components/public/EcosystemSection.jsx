@@ -315,6 +315,10 @@ export default function EcosystemSection({ brands = [], onSelectBrand, hideHeade
                       src={brand.logo || '/stackyr-icon-dark.png'}
                       alt={brand.name}
                       style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/stackyr-icon-dark.png';
+                      }}
                     />
                   </div>
                   <div>

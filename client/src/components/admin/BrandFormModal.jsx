@@ -82,6 +82,27 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
     reader.readAsDataURL(file);
   };
 
+  const handleFetchWebsiteFavicon = () => {
+    if (!formData.websiteUrl) {
+      error('Please enter a Website URL first in Step 04 (Links)');
+      return;
+    }
+    try {
+      let cleanUrl = formData.websiteUrl.trim();
+      if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+        cleanUrl = 'https://' + cleanUrl;
+      }
+      const host = new URL(cleanUrl).hostname;
+      const faviconUrl = `https://www.google.com/s2/favicons?domain=${host}&sz=256`;
+      setLogoPreview(faviconUrl);
+      setFormData(prev => ({ ...prev, logo: faviconUrl }));
+      setLogoFile(null);
+      success(`Extracted brand logo for ${host}!`);
+    } catch (e) {
+      error('Invalid website URL format');
+    }
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
@@ -148,8 +169,13 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
     try {
       let finalLogoUrl = formData.logo;
 
-      // If user uploaded a new physical file, upload it first to server
-      if (logoFile) {
+      // Prioritize Base64 Data URL or direct URL so logo is saved directly into MongoDB Atlas
+      if (formData.logo && formData.logo.startsWith('data:')) {
+        finalLogoUrl = formData.logo;
+        if (logoFile) {
+          uploadAsset(logoFile).catch(() => {});
+        }
+      } else if (logoFile) {
         try {
           const uploadRes = await uploadAsset(logoFile);
           if (uploadRes.success && uploadRes.url) {
@@ -843,6 +869,51 @@ export default function BrandFormModal({ brand, onClose, onSaved }) {
                       if (e.target.files && e.target.files[0]) {
                         handleLogoFileSelect(e.target.files[0]);
                       }
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Website Auto-fetch & URL Input Row */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
+                    EXTRACT FROM WEBSITE URL
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleFetchWebsiteFavicon}
+                    className="btn-secondary"
+                    style={{ width: '100%', justifyContent: 'center', padding: '12px', gap: '8px' }}
+                  >
+                    <Globe size={16} color="var(--accent-orange)" />
+                    <span>Auto-Extract Logo from {formData.websiteUrl ? new URL(formData.websiteUrl.startsWith('http') ? formData.websiteUrl : 'https://' + formData.websiteUrl).hostname : 'Website URL'}</span>
+                  </button>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
+                    OR PASTE LOGO / IMAGE URL
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://... or data:image/..."
+                    value={formData.logo && !formData.logo.startsWith('data:') ? formData.logo : ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setLogoPreview(val || '/uploads/stackyr-icon-dark.png');
+                      setFormData(prev => ({ ...prev, logo: val }));
+                      setLogoFile(null);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      borderRadius: '12px',
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: '#FFFFFF',
+                      fontSize: '0.9rem',
+                      outline: 'none'
                     }}
                   />
                 </div>

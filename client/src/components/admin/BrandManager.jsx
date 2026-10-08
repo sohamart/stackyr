@@ -292,9 +292,13 @@ export default function BrandManager({ brands = [], onRefresh, onOpenCreate, onO
                       }}
                     >
                       <img
-                        src={brand.logo || '/uploads/stackyr-icon-dark.png'}
+                        src={brand.logo || '/stackyr-icon-dark.png'}
                         alt={brand.name}
                         style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/stackyr-icon-dark.png';
+                        }}
                       />
                     </div>
                     <div>
@@ -436,9 +440,13 @@ export default function BrandManager({ brands = [], onRefresh, onOpenCreate, onO
                     }}
                   >
                     <img
-                      src={brand.logo || '/uploads/stackyr-icon-dark.png'}
+                      src={brand.logo || '/stackyr-icon-dark.png'}
                       alt={brand.name}
                       style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/stackyr-icon-dark.png';
+                      }}
                     />
                   </div>
                   <div style={{ minWidth: 0 }}>

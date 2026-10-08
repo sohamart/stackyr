@@ -169,6 +169,10 @@ export default function BrandDetailModal({ brand, onClose }) {
                 src={brand.logo}
                 alt={brand.name}
                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/stackyr-icon-dark.png';
+                }}
               />
             ) : (
               <Layers size={28} color={accent} />
